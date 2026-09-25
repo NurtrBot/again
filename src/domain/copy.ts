@@ -3,10 +3,12 @@ export const COPY = {
   brand: 'again.',
   s01: {
     signIn: 'Sign in',
-    heading: 'Give your photo\na pulse.',
+    heading: 'Give your\nphoto a\npulse.',
     sampleLabel: 'TRY A MOMENT',
     cta: 'Choose a photo',
     sub: 'One photo. Ten seconds of life.',
+    watch: 'Watch example',
+    pick: 'Pick a memory. We’ll bring it to life.',
     howItWorks: 'How it works',
     pricing: 'Pricing',
   },

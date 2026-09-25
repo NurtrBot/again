@@ -2736,3 +2736,99 @@ p {
   width: 24px;
   height: 24px;
 }
+
+/* ---------- Welcome v2 (owner mockup, Sep 25) ---------- */
+.welcome-shell .header {
+  min-height: 48px;
+  padding-top: 6px;
+  padding-bottom: 0;
+}
+.welcome__title {
+  margin-top: 6px;
+  font-size: clamp(3rem, 15vw, 4.1rem);
+  line-height: 0.87;
+  letter-spacing: -0.05em;
+}
+.welcome__sub {
+  margin-top: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  color: #fff;
+}
+.welcome__card {
+  position: relative;
+  margin-top: 13px;
+  aspect-ratio: 4 / 3;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #0f1420;
+}
+.welcome__card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.welcome__watch {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+}
+.welcome__watch svg {
+  width: 14px;
+  height: 14px;
+}
+.welcome__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  width: 100%;
+  min-height: 56px;
+  margin-top: 22px;
+  border-radius: 999px;
+  background: #fff;
+  color: var(--cobalt);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 23px;
+  letter-spacing: -0.03em;
+  transition: transform 120ms var(--ease-out);
+}
+.welcome__cta:active {
+  transform: scale(0.98);
+}
+.welcome__cta:disabled {
+  opacity: 0.7;
+}
+.welcome__cta svg {
+  width: 26px;
+  height: 26px;
+}
+.welcome__pick {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 16px;
+  color: #fff;
+}
+.welcome__links {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-top: auto;
+  padding: 26px 0 28px;
+  font-size: 16px;
+}
+.welcome__links .link {
+  font-weight: 400;
+  text-underline-offset: 5px;
+}
