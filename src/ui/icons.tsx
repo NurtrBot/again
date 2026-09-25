@@ -278,22 +278,26 @@ export const ViewfinderPlus = (p: P) => (
 );
 
 export const Wave = (p: P) => (
-  <svg {...base({ ...p, strokeWidth: 2.4 })}>
-    <path d="M3 13c2.5-4 5-4 7.5 0s5 4 7.5 0 2.5-2 3 0" />
+  <svg {...base({ ...p, strokeWidth: 1.5 })}>
+    <rect x="2.5" y="4.5" width="19" height="15" rx="3.2" />
+    <path d="M11 16.6c2.8 0 5-1.6 6.2-4.2" />
   </svg>
 );
 export const Arcs = (p: P) => (
-  <svg {...base({ ...p, strokeWidth: 2.4 })}>
-    <path d="M6 20c0-7 4-12 10-14" />
-    <path d="M11 20c0-4.5 2.5-8 7-9.5" />
+  <svg {...base({ ...p, strokeWidth: 1.5 })}>
+    <g transform="rotate(-9 15 12)">
+      <rect x="8" y="5" width="14" height="13" rx="2.8" />
+    </g>
+    <path d="M2 9.2h3.4" />
+    <path d="M1.4 12.6h4.6" />
   </svg>
 );
 export const Shuffle = (p: P) => (
-  <svg {...base({ ...p, strokeWidth: 2.2 })}>
-    <path d="M3 7h3.5c2 0 3.5 1 4.5 2.5l2 3c1 1.5 2.5 2.5 4.5 2.5H21" />
-    <path d="M3 15h3.5c2 0 3.5-1 4.5-2.5" />
-    <path d="M13.5 9.5c1-1.5 2.5-2.5 4.5-2.5H21" />
-    <path d="M18.5 4.5L21 7l-2.5 2.5" />
-    <path d="M18.5 12.5L21 15l-2.5 2.5" />
+  <svg {...base({ ...p, strokeWidth: 1.5 })}>
+    <rect x="2.5" y="4.5" width="19" height="15" rx="3.2" />
+    <path d="M6.5 15.5c2 0 2.9-1 4-2.4l1.6-2.2c1.1-1.4 2-2.4 4-2.4h1.7" />
+    <path d="M6.5 8.5c2 0 2.9 1 4 2.4l1.6 2.2c1.1 1.4 2 2.4 4 2.4h1.7" />
+    <path d="M16.2 6.9l1.6 1.6-1.6 1.6" />
+    <path d="M16.2 13.9l1.6 1.6-1.6 1.6" />
   </svg>
 );

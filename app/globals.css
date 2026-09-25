@@ -2915,10 +2915,10 @@ p {
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 94px;
+  min-height: 100px;
   padding: 12px 4px;
-  border-radius: 14px;
-  background: var(--soft-blue);
+  border-radius: 16px;
+  background: #f0f0f3;
   color: var(--ink);
   transition: transform 120ms var(--ease-out);
 }
@@ -2926,13 +2926,13 @@ p {
   transform: scale(0.97);
 }
 .feeling__icon {
-  width: 36px;
-  height: 36px;
-  color: var(--cobalt);
+  width: 48px;
+  height: 48px;
+  color: var(--ink);
 }
 .feeling__label {
-  font-size: 16.5px;
-  font-weight: 700;
+  font-size: 17px;
+  font-weight: 500;
   letter-spacing: -0.02em;
   white-space: nowrap;
 }
