@@ -1828,26 +1828,18 @@ p {
   min-height: 56px;
 }
 .thumb-strip {
-  display: flex;
-  gap: 8px;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  scrollbar-width: none;
-  margin-inline: calc(var(--page-gutter) * -1);
-  padding-inline: var(--page-gutter);
-}
-.thumb-strip::-webkit-scrollbar {
-  display: none;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 .thumb-strip__item {
   position: relative;
-  flex: 0 0 calc((100% - 16px) / 3);
   aspect-ratio: 137 / 106;
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
   background: #1a1f2a;
   display: block;
-  scroll-snap-align: start;
+  width: 100%;
 }
 .thumb-strip__item img {
   width: 100%;

@@ -11,3 +11,4 @@ Launch requirement: replace with separately licensed or owned examples and ackno
 
 ## Real films (added Sep 25, 2026)
 - `evening-home.mp4/.jpg` and `restaurant-film.mp4/.jpg` — actual again. outputs (Kling 3.0 via Higgsfield) supplied by the owner, re-encoded to 1280px for the inspiration strip. Labeled "made with again." in the UI. The restaurant one derives from the owner's watermarked source photo; confirm rights before public marketing use.
+- `inspiration-3.mp4/.jpg` — third real again. film (couple on the beach at sunset) supplied by the owner, re-encoded to 1280px. Labeled "made with again."

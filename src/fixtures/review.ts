@@ -16,8 +16,7 @@ export const SAMPLE = {
 export const INSPIRATION: Array<{ src: string; video: string; label: string; real?: boolean }> = [
   { src: SAMPLE.eveningHome, video: '/samples/evening-home.mp4', label: 'Evening at home', real: true },
   { src: SAMPLE.restaurantFilm, video: '/samples/restaurant-film.mp4', label: 'Yakitori night', real: true },
-  { src: SAMPLE.dog, video: SAMPLE.dogVideo, label: 'Dog on the beach' },
-  { src: SAMPLE.family, video: '/samples/family-park.mp4', label: 'Family in the park' },
+  { src: '/samples/inspiration-3.jpg', video: '/samples/inspiration-3.mp4', label: 'Sunset walk', real: true },
 ];
 
 const FIXED_NOW = '2026-09-25T15:04:00.000Z';
