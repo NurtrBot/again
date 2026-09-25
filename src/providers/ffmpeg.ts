@@ -75,16 +75,24 @@ export async function remuxFaststart(video: string, out: string): Promise<void> 
  */
 export async function renderDemoPushIn(image: string, out: string, opts: { width: number; height: number; seconds?: number }): Promise<void> {
   const seconds = opts.seconds ?? 10;
-  const fps = 24;
-  const frames = seconds * fps;
+  const fps = 30;
   // Even dimensions, max 1280 long edge.
   const scale = Math.min(1, 1280 / Math.max(opts.width, opts.height));
   const w = Math.max(2, Math.round((opts.width * scale) / 2) * 2);
   const h = Math.max(2, Math.round((opts.height * scale) / 2) * 2);
-  const filter = `[0:v]scale=${w * 2}:${h * 2},zoompan=z='min(1.0+0.05*on/${frames},1.05)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=${frames}:s=${w}x${h}:fps=${fps},format=yuv420p[v]`;
+  // Smooth sub-pixel push-in: per-frame scale (eval=frame, time-based) then a fixed centered crop.
+  // Unlike zoompan this has no integer stepping, so motion is continuous.
+  const zoomEnd = 1.06;
+  const z = `(1+${zoomEnd - 1}*t/${seconds})`;
+  const filter = [
+    `[0:v]fps=${fps}`,
+    `scale=w='${w}*${z}':h='${h}*${z}':eval=frame:flags=lanczos`,
+    `crop=${w}:${h}:'(iw-${w})/2':'(ih-${h})/2'`,
+    `format=yuv420p[v]`,
+  ].join(',');
   await exec(
     FFMPEG,
-    ['-y', '-loop', '1', '-i', image, '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100', '-filter_complex', filter, '-map', '[v]', '-map', '1:a', '-t', String(seconds), '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '22', '-c:a', 'aac', '-shortest', '-movflags', '+faststart', out],
+    ['-y', '-loop', '1', '-framerate', String(fps), '-i', image, '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100', '-filter_complex', filter, '-map', '[v]', '-map', '1:a', '-t', String(seconds), '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '20', '-c:a', 'aac', '-shortest', '-movflags', '+faststart', out],
     { timeout: 300_000 },
   );
 }

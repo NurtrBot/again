@@ -16,10 +16,10 @@ for (const name of samples) {
     ffmpegPath as string,
     [
       '-y',
-      '-loop', '1', '-i', input,
+      '-loop', '1', '-framerate', '30', '-i', input,
       '-f', 'lavfi', '-i', 'anullsrc=channel_layout=stereo:sample_rate=44100',
       '-filter_complex',
-      "[0:v]scale=1600:-2,zoompan=z='min(1.0+0.06*on/240,1.06)':x='iw/2-(iw/zoom/2)':y='ih/2-(ih/zoom/2)':d=240:s=1280x960:fps=24,format=yuv420p[v]",
+      "[0:v]fps=30,scale=w='1280*(1+0.06*t/10)':h='960*(1+0.06*t/10)':eval=frame:flags=lanczos,crop=1280:960:'(iw-1280)/2':'(ih-960)/2',format=yuv420p[v]",
       '-map', '[v]', '-map', '1:a',
       '-t', '10', '-c:v', 'libx264', '-preset', 'veryfast', '-crf', '23', '-c:a', 'aac', '-shortest', '-movflags', '+faststart',
       output,
