@@ -17,6 +17,8 @@ Built from the approved seven-board handoff in [`handoff/`](handoff/) (kept inta
 | Stripe Checkout (Elements) + webhooks + portal + schedules | Implemented against current docs; **not live-tested** (no Stripe keys) |
 | Supabase Auth/Storage drivers | Implemented; **not live-tested** (no project) |
 
+**Hosted test build:** https://again-kappa-seven.vercel.app (Vercel + Neon + private Vercel Blob; render worker runs on the owner's Mac — see RUNBOOK §6).
+
 See [`docs/UNTESTED.md`](docs/UNTESTED.md) for the explicit list of live integrations still to be verified and [`docs/RUNBOOK.md`](docs/RUNBOOK.md) for deployment.
 
 ## Quick start (local, no provider keys)

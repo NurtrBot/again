@@ -36,3 +36,12 @@
 ## 5. Rollback
 
 Set `GENERATION_ENABLED=false` first (lets in-flight jobs finish), then roll web and worker independently only with a compatible schema. Ledger rows are append-only; compensate with events, never delete. Never restart provider submissions blindly.
+
+## 6. Current hosted setup (Sep 25, 2026)
+
+- **Web**: Vercel project `again` (team pndcbot-8034s-projects), production URL https://again-kappa-seven.vercel.app, framework preset Next.js, Vercel Authentication (deployment protection) turned off so phones can open it. Deploys are pushed from the CLI (`vercel deploy --prod --yes`); the GitHub app is not installed, so push-to-deploy is off.
+- **Database**: Neon (`neon-amber-drawer`, us-east-1) via the Vercel marketplace. Vercel injects the pooled `DATABASE_URL`; migrations and the worker use the unpooled URL (session-level advisory lock in the migration runner).
+- **Media**: private Vercel Blob store `again-media-private` (`STORAGE_DRIVER=blob`). Browsers upload with presigned PUTs; playback, downloads and the Kling image fetch use presigned GET URLs (5-minute to 2-hour TTLs). No public objects.
+- **Worker**: runs on the owner's Mac against the hosted stack: `ENV_FILE=.env.hosted npm run worker` (that file holds the unpooled Neon URL and the Blob token; it is git-ignored). Move it to Railway/Fly/Render with the same env for always-on rendering.
+- **Sign-in codes**: `ALLOW_DEMO_CODE=true` shows the code in the banner because no SMTP is configured yet. Set `MAIL_DRIVER=smtp` + `SMTP_URL` and turn that flag off before real users.
+- **Credits**: `ENV_FILE=.env.hosted npm run credits:grant -- you@example.com 10` grants test credits on the hosted database.
