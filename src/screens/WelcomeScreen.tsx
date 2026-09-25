@@ -58,7 +58,7 @@ export function WelcomeScreen({ demo, review, signedIn, sampleSrc, sampleVideo }
 
         <div className="welcome__card">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={sampleSrc} alt="Example photo: a dog on a beach, ready to be animated" />
+          <img src={sampleSrc} alt="Example: the first frame of a film made with again." />
           {sampleVideo ? (
             <button type="button" className="welcome__watch" onClick={() => setPlaying(true)}>
               <Play />
@@ -89,12 +89,12 @@ export function WelcomeScreen({ demo, review, signedIn, sampleSrc, sampleVideo }
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
             <div style={{ width: '100%', maxWidth: 440 }} onClick={(e) => e.stopPropagation()}>
               <div className="row-between text-white" style={{ marginBottom: 8 }}>
-                <span className="mono">Example · demo render, not a user film</span>
+                <span className="mono">Example · Evening at home · made with again.</span>
                 <button type="button" className="icon-btn" aria-label="Close" onClick={() => setPlaying(false)}>
                   <Close />
                 </button>
               </div>
-              <video src={sampleVideo} controls autoPlay playsInline style={{ width: '100%', borderRadius: 4, background: '#000' }} />
+              <video src={sampleVideo} controls autoPlay loop playsInline style={{ width: '100%', borderRadius: 4, background: '#000' }} />
             </div>
           </div>
         </div>

@@ -8,5 +8,5 @@ export const dynamic = 'force-dynamic';
 export default async function HomePage() {
   const env = getEnv();
   const user = await getSessionUser();
-  return <WelcomeScreen demo={env.demo.any} signedIn={!!user} sampleSrc={SAMPLE.dog} sampleVideo={SAMPLE.dogVideo} />;
+  return <WelcomeScreen demo={env.demo.any} signedIn={!!user} sampleSrc={SAMPLE.eveningHome} sampleVideo="/samples/evening-home.mp4" />;
 }

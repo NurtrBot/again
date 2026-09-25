@@ -49,7 +49,7 @@ export const REVIEW_IDS = Object.keys(REVIEW_NAMES);
 export function ReviewScreen({ id }: { id: string }) {
   switch (id) {
     case '01':
-      return <WelcomeScreen review sampleSrc={SAMPLE.dog} sampleVideo={SAMPLE.dogVideo} />;
+      return <WelcomeScreen review sampleSrc={SAMPLE.eveningHome} sampleVideo="/samples/evening-home.mp4" />;
     case '02':
       return <AuthScreen review oauthProviders={['apple', 'google']} returnTo="/create" reviewThumb={SAMPLE.dog} />;
     case '03':
