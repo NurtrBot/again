@@ -3,7 +3,7 @@ import { db, withTransaction } from '../db';
 import { getEnv } from '../env';
 import { HttpError } from '../errors';
 import { hmacHex, safeEqual, safeReturnTo } from '@/src/domain/helpers';
-import { sendMail } from '../mail';
+import { sendMail, signInCodeEmail } from '../mail';
 import { createLocalSession } from './session';
 import { creditsService } from '../services/credits';
 
@@ -29,11 +29,7 @@ export const localAuth = {
     const id = row!.id;
     await db.query('update public.auth_otp_challenges set code_hash=$2 where id=$1', [id, hashCode(id, code)]);
     const env = getEnv();
-    const delivered = await sendMail({
-      to: email,
-      subject: `${code} is your again. code`,
-      text: `Your again. sign-in code is ${code}. It expires in ${OTP_TTL_MIN} minutes.\n\nIf you didn’t request this, you can ignore this email.`,
-    });
+    const delivered = await sendMail({ to: email, ...signInCodeEmail(code, OTP_TTL_MIN) });
     const demoCode = env.MAIL_DRIVER === 'console' && !env.isProduction ? code : undefined;
     if (!delivered && !demoCode) throw new HttpError(503, 'mail_unavailable', 'We couldn’t send the code right now. Please try again shortly.');
     return { challengeId: id, resendAfterSeconds: RESEND_SECONDS, demoCode };
