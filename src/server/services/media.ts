@@ -100,10 +100,13 @@ export const mediaService = {
       return this.get(userId, mediaId);
     }
     let meta: Metadata;
+    let decoded = buf;
     try {
-      meta = await sharp(buf, { limitInputPixels: MAX_PIXELS + 1, pages: -1 }).metadata();
-    } catch {
-      await reject(row.id, 'unreadable');
+      if (sniffed === 'image/heic') decoded = await heicToJpeg(buf);
+      meta = await sharp(decoded, { limitInputPixels: MAX_PIXELS + 1, pages: -1 }).metadata();
+    } catch (err) {
+      console.warn('[media] decode failed', mediaId, sniffed, (err as Error).message?.slice(0, 120));
+      await reject(row.id, sniffed === 'image/heic' ? 'heic_unsupported' : 'unreadable');
       return this.get(userId, mediaId);
     }
     const w = meta.width ?? 0;
@@ -142,10 +145,11 @@ export const mediaService = {
   async normalize(mediaId: string) {
     const row = await db.one<MediaRow>('select * from public.media_assets where id=$1', [mediaId]);
     if (!row || row.state !== 'validating') return;
-    const buf = await storage().read(row.storage_bucket, row.object_key);
+    let buf = await storage().read(row.storage_bucket, row.object_key);
     let out: Buffer;
     let info: { width: number; height: number };
     try {
+      if (row.mime_type === 'image/heic' || sniffImageType(buf) === 'image/heic') buf = await heicToJpeg(buf);
       const r = await sharp(buf, { limitInputPixels: MAX_PIXELS + 1 })
         .rotate()
         .resize({ width: NORMALIZED_MAX_EDGE, height: NORMALIZED_MAX_EDGE, fit: 'inside', withoutEnlargement: true })
@@ -193,6 +197,13 @@ export const mediaService = {
   },
 };
 
+/** Prebuilt sharp can read HEIC metadata but not decode HEVC frames; libheif (WASM) can. Returns a JPEG buffer. */
+export async function heicToJpeg(buf: Buffer): Promise<Buffer> {
+  const convert = (await import('heic-convert')).default;
+  const out = await convert({ buffer: buf, format: 'JPEG', quality: 0.95 });
+  return Buffer.from(out as ArrayBuffer);
+}
+
 async function reject(id: string, code: string) {
   await db.query(`update public.media_assets set state='rejected', error_code=$2, updated_at=now() where id=$1`, [id, code]);
 }
@@ -202,13 +213,8 @@ export function heicSupported(): boolean {
   if (heicCache !== null) return heicCache;
   if (process.env.HEIC_SUPPORTED === 'false') return (heicCache = false);
   if (process.env.HEIC_SUPPORTED === 'true') return (heicCache = true);
-  try {
-    // Prebuilt sharp supports HEIF containers only with AVIF codec unless libvips has libheif+HEVC.
-    const heif = (sharp.format as unknown as Record<string, { input?: { file?: boolean } }>).heif;
-    heicCache = !!heif?.input?.file && getEnv().HEIC_SUPPORTED !== 'false';
-  } catch {
-    heicCache = false;
-  }
+  // HEIC is decoded with the bundled libheif WASM (heic-convert); sharp's own HEVC support is not required.
+  heicCache = true;
   return heicCache;
 }
 

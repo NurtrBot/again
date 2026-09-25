@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { COPY } from '@/src/domain/copy';
-import { Alert, Apple, Google } from '@/src/ui/icons';
+import { Alert, Apple, Google, Mail } from '@/src/ui/icons';
 import { Button, Header, Shell } from '@/src/ui/primitives';
 import { api, ApiFailure } from '@/src/ui/api';
 import { getLocalDraft } from '@/src/ui/draft-store';
@@ -97,24 +97,26 @@ export function AuthScreen({ demo, review, oauthProviders, returnTo, reviewThumb
     }
   }
 
+  void thumb;
   return (
-    <Shell theme="white" demo={demo}>
-      <Header backHref="/" />
+    <Shell theme="white" demo={demo} className="auth-shell">
+      <Header
+        backHref="/"
+        center={
+          <Link href="/" className="brand" aria-label="again. home">
+            again<span className="text-cobalt">.</span>
+          </Link>
+        }
+      />
       <div className="shell__body">
-        {thumb ? (
-          <div className="photo photo--enter" style={{ width: 234, aspectRatio: '234 / 150', borderRadius: 6, marginTop: 20 }}>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={thumb} alt="Your chosen photo, kept for after sign-in" />
-          </div>
-        ) : null}
-        <h1 className="display" style={{ marginTop: thumb ? 20 : 40, fontSize: 'clamp(2.5rem, 12.8vw, 3.25rem)' }}>
-          {COPY.s02.heading}
-        </h1>
-        <p className="lead" style={{ marginTop: 10, fontSize: 18, color: 'var(--ink)' }}>
-          {COPY.s02.sub}
-        </p>
+        <div className="auth__collage" aria-hidden>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/samples/auth-collage.jpg" alt="" />
+        </div>
+        <h1 className="display auth__title">{COPY.s02.heading}</h1>
+        <p className="auth__sub">{COPY.s02.sub}</p>
 
-        <form onSubmit={submit} className="stack" style={{ marginTop: 24 }} noValidate>
+        <form onSubmit={submit} className="stack auth__form" noValidate>
           {oauthProviders.includes('apple') ? (
             <Button variant="black" type="button" icon={<Apple />} onClick={() => oauth('apple')} disabled={pending} style={{ fontSize: 19 }}>
               {COPY.s02.apple}
@@ -129,13 +131,12 @@ export function AuthScreen({ demo, review, oauthProviders, returnTo, reviewThumb
             <div className="rule--or" style={{ marginTop: 22, marginBottom: 16 }}>
               {COPY.s02.or}
             </div>
-          ) : (
-            <div style={{ height: 8 }} />
-          )}
-          <div className="field">
-            <label className="field__label" htmlFor="email">
-              {COPY.s02.emailLabel}
-            </label>
+          ) : null}
+          <label className="auth__label" htmlFor="email">
+            {COPY.s02.emailLabel}
+          </label>
+          <div className="auth__input">
+            <Mail />
             <input
               id="email"
               name="email"
@@ -144,7 +145,6 @@ export function AuthScreen({ demo, review, oauthProviders, returnTo, reviewThumb
               autoComplete="email"
               autoCapitalize="none"
               spellCheck={false}
-              className="input"
               placeholder={COPY.s02.emailPlaceholder}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -159,20 +159,19 @@ export function AuthScreen({ demo, review, oauthProviders, returnTo, reviewThumb
               <span>{err}</span>
             </div>
           ) : null}
-          <Button type="submit" arrow pending={pending} style={{ marginTop: 16 }}>
+          <Button type="submit" arrow pending={pending} className="auth__cta">
             {COPY.s02.cta}
           </Button>
         </form>
-        <p className="helper center" style={{ marginTop: 16, fontSize: 15, color: 'var(--ink)', letterSpacing: '-0.01em' }}>
-          {COPY.s02.newHere}
-        </p>
-        <p className="helper center nowrap" style={{ marginTop: 'auto', paddingTop: 24, paddingBottom: 30, fontSize: 12.5, color: 'var(--ink)', letterSpacing: '-0.01em' }}>
+        <p className="auth__new">{COPY.s02.newHere}</p>
+        <p className="auth__legal">
           {COPY.s02.legalPrefix}
-          <Link href="/terms" className="link" style={{ fontWeight: 400 }}>
+          <br />
+          <Link href="/terms" className="link">
             {COPY.s02.terms}
           </Link>
           {COPY.s02.and}
-          <Link href="/privacy" className="link" style={{ fontWeight: 400 }}>
+          <Link href="/privacy" className="link">
             {COPY.s02.privacy}
           </Link>
           .

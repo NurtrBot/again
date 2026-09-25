@@ -301,3 +301,10 @@ export const Shuffle = (p: P) => (
     <path d="M16.2 13.9l1.6 1.6-1.6 1.6" />
   </svg>
 );
+
+export const Mail = (p: P) => (
+  <svg {...base({ ...p, strokeWidth: 1.8 })}>
+    <rect x="3" y="5.5" width="18" height="13" rx="2" />
+    <path d="M3.5 7l8.5 6 8.5-6" />
+  </svg>
+);

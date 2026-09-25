@@ -2203,14 +2203,12 @@ p {
   background: var(--cobalt);
   opacity: 0.6;
 }
-.ticker--sweep .ticker__track {
+.ticker .ticker__track {
+  /* One continuous animation regardless of phase, so phase changes never restart the sweep. */
   animation: ticker-sweep 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
 }
-.ticker--idle .ticker__track {
-  animation: ticker-sweep 7s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
-}
-.ticker--finish .ticker__track {
-  animation: ticker-finish 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+.ticker--idle .ticker__ticks--lit {
+  opacity: 0.7;
 }
 .ticker--finish .ticker__ticks--dim span {
   opacity: 1;
@@ -2220,11 +2218,6 @@ p {
   from {
     --x: 0;
   }
-  to {
-    --x: 1;
-  }
-}
-@keyframes ticker-finish {
   to {
     --x: 1;
   }
@@ -3112,4 +3105,92 @@ p {
   padding-bottom: 28px;
   font-size: 15px;
   color: rgba(255, 255, 255, 0.85);
+}
+
+/* ---------- Auth v2 (owner mockup, Sep 25) ---------- */
+.auth-shell {
+  background: #fdfdfd;
+}
+.auth__collage {
+  margin: 8px calc(var(--page-gutter) * -1 + 6px) 0;
+  aspect-ratio: 826 / 550;
+}
+.auth__collage img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.auth__title {
+  margin-top: 14px;
+  font-size: clamp(2.9rem, 14.4vw, 3.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.auth__sub {
+  margin-top: 12px;
+  font-size: 19px;
+  color: #3c4148;
+}
+.auth__form {
+  margin-top: 26px;
+}
+.auth__label {
+  font-size: 19px;
+  font-weight: 500;
+  margin-bottom: 10px;
+}
+.auth__input {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.auth__input svg {
+  position: absolute;
+  left: 18px;
+  width: 22px;
+  height: 22px;
+  color: var(--muted);
+  pointer-events: none;
+}
+.auth__input input {
+  width: 100%;
+  min-height: 54px;
+  padding: 0 16px 0 56px;
+  border: 1.5px solid #d9dce3;
+  border-radius: 8px;
+  background: #f5f6f8;
+  font-size: 18px;
+  color: var(--ink);
+}
+.auth__input input::placeholder {
+  color: var(--muted-2);
+}
+.auth__input input:focus {
+  outline: none;
+  border-color: var(--cobalt);
+  box-shadow: inset 0 0 0 1px var(--cobalt);
+  background: #fff;
+}
+.auth__cta.btn {
+  margin-top: 14px;
+  min-height: 54px;
+  border-radius: 12px;
+  font-size: 22px;
+}
+.auth__new {
+  margin-top: 18px;
+  text-align: center;
+  font-size: 17px;
+  color: #3c4148;
+}
+.auth__legal {
+  margin-top: auto;
+  padding: 36px 0 30px;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #3c4148;
+}
+.auth__legal .link {
+  font-weight: 400;
 }

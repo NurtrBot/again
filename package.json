@@ -2,7 +2,7 @@
   "name": "again",
   "version": "0.1.0",
   "private": true,
-  "description": "again. \u2014 a private photo-to-video web app. Ten seconds of life for one photo.",
+  "description": "again. — a private photo-to-video web app. Ten seconds of life for one photo.",
   "engines": {
     "node": ">=22"
   },
@@ -31,6 +31,7 @@
     "@supabase/supabase-js": "2.117.2",
     "ffmpeg-static": "5.3.0",
     "ffprobe-static": "3.1.0",
+    "heic-convert": "^2.1.0",
     "next": "16.3.6",
     "nodemailer": "10.0.10",
     "pg": "8.23.0",

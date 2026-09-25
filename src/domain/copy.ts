@@ -21,7 +21,7 @@ export const COPY = {
     emailLabel: 'Email address',
     emailPlaceholder: 'you@example.com',
     cta: 'Email me a code',
-    newHere: 'New here? Your account is created automatically.',
+    newHere: 'New here? We’ll create your account.',
     legalPrefix: 'By continuing, you agree to our ',
     terms: 'Terms',
     and: ' and ',

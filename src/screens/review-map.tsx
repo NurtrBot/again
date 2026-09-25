@@ -51,7 +51,7 @@ export function ReviewScreen({ id }: { id: string }) {
     case '01':
       return <WelcomeScreen review sampleSrc={SAMPLE.eveningHome} sampleVideo="/samples/evening-home.mp4" />;
     case '02':
-      return <AuthScreen review oauthProviders={['apple', 'google']} returnTo="/create" reviewThumb={SAMPLE.dog} />;
+      return <AuthScreen review oauthProviders={[]} returnTo="/create" />;
     case '03':
       return <VerifyScreen review challengeId="review" reviewCode="482" reviewEmail="you@example.com" reviewThumb={SAMPLE.dog} />;
     case '04':
