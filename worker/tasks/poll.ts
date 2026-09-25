@@ -35,7 +35,8 @@ export async function pollGeneration(task: TaskRow): Promise<TaskResult> {
       console.error(`[poll] attempt ${attempt.id} exceeded ${MAX_POLL_HOURS}h; needs operator review`);
       return retry(30 * 60_000, 'poll_stalled_operator_review');
     }
-    return retry(elapsed < 60_000 ? 5000 : elapsed < 5 * 60_000 ? 10_000 : 30_000, 'processing');
+    // Status GETs are cheap: poll every 4s for the typical render window, then back off.
+    return retry(elapsed < 6 * 60_000 ? 4000 : elapsed < 20 * 60_000 ? 15_000 : 60_000, 'processing');
   }
   if (result.state === 'failed') {
     await db.query(`update public.provider_attempts set state='failed', error_code=$2, updated_at=now() where id=$1`, [attempt.id, result.code]);

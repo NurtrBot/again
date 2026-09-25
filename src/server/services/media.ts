@@ -169,7 +169,9 @@ export const mediaService = {
         [normId, row.user_id, key, out.length, info.width, info.height, sha256Hex(out), row.id],
       );
       await tx.query(`update public.media_assets set state='ready', updated_at=now() where id=$1 and state='validating'`, [row.id]);
-      await tx.query(`update public.drafts set normalized_asset_id=$2, status='ready', updated_at=now() where source_asset_id=$1 and status='validating'`, [row.id, normId]);
+      const readyDrafts = (await tx.query<{ id: string; user_id: string; normalized_asset_id: string; feeling: 'gentle' | 'lively' | 'surprise'; direction: string }>(`update public.drafts set normalized_asset_id=$2, status='ready', updated_at=now() where source_asset_id=$1 and status='validating' returning id, user_id, normalized_asset_id, feeling, direction`, [row.id, normId])).rows;
+      const { requestPreplan } = await import('./planning');
+      for (const d of readyDrafts) await requestPreplan(tx, d);
     });
   },
 

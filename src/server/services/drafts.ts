@@ -3,6 +3,7 @@ import { HttpError, notFound } from '../errors';
 import { mediaService, type MediaRow } from './media';
 import type { Draft } from '@/src/domain/types';
 import { isFeeling, type Feeling } from '@/src/domain/helpers';
+import { requestPreplan } from './planning';
 
 export interface DraftRow {
   id: string;
@@ -49,6 +50,7 @@ export const draftsService = {
       `insert into public.drafts(user_id, source_asset_id, normalized_asset_id, status) values ($1,$2,$3,$4) returning *`,
       [userId, media.id, normalized?.id ?? null, normalized ? 'ready' : 'validating'],
     );
+    await requestPreplan(db, row!);
     return project(row!);
   },
 
@@ -92,6 +94,7 @@ export const draftsService = {
         `update public.drafts set feeling=$3, direction=$4, source_asset_id=$5, normalized_asset_id=$6, status=$7, version=version+1, updated_at=now() where id=$1 and user_id=$2 returning *`,
         [draftId, userId, feeling, direction, sourceId, normalizedId, status === 'completed' ? 'ready' : status],
       );
+      await requestPreplan(tx, updated!);
       return project(updated!);
     });
   },

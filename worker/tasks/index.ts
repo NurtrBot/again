@@ -5,6 +5,7 @@ import { pollGeneration } from './poll';
 import { finalizeGeneration } from './finalize';
 import { reconcileUnknownSubmission } from './reconcile';
 import { deleteAccount } from './delete-account';
+import { preplan } from './preplan';
 
 export interface TaskRow {
   id: string;
@@ -26,6 +27,8 @@ export async function runTask(task: TaskRow): Promise<TaskResult> {
       return done;
     case 'plan_generation':
       return planGeneration(task);
+    case 'preplan':
+      return preplan(task);
     case 'submit_generation':
       return submitGeneration(task);
     case 'poll_generation':

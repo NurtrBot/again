@@ -3,6 +3,7 @@ import type { Db } from '../db';
 export type OutboxType =
   | 'normalize_media'
   | 'plan_generation'
+  | 'preplan'
   | 'submit_generation'
   | 'poll_generation'
   | 'finalize_generation'

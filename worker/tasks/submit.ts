@@ -78,7 +78,7 @@ export async function submitGeneration(task: TaskRow): Promise<TaskResult> {
       await tx.query(`insert into public.provider_spend(day, provider, amount_usd, jobs) values (current_date,$1,$2,1) on conflict (day, provider) do update set amount_usd=public.provider_spend.amount_usd+excluded.amount_usd, jobs=public.provider_spend.jobs+1`, [provider.name, provider.estimatedCostUsd]);
       await tx.query(`update public.generations set provider_cost_usd=$2, updated_at=now() where id=$1`, [gen.id, provider.estimatedCostUsd]);
       await generationsService.transition(tx, gen.id, ['submitting'], 'processing', { phaseDetail: 'Submitted to renderer' });
-      await enqueue(tx, 'poll_generation', `poll:${attemptId}`, { generationId: gen.id, attemptId }, { delayMs: 5000 });
+      await enqueue(tx, 'poll_generation', `poll:${attemptId}`, { generationId: gen.id, attemptId }, { delayMs: 3000 });
     });
     console.log(`[submit] ${gen.id} attempt ${ordinal} -> ${provider.name} ${r.requestId}`);
     return done;

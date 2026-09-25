@@ -2,10 +2,10 @@ import { db, withTransaction } from '../../src/server/db';
 import { getEnv } from '../../src/server/env';
 import { generationsService } from '../../src/server/services/generations';
 import { enqueue } from '../../src/server/services/outbox';
-import { storage } from '../../src/server/storage';
 import type { MediaRow } from '../../src/server/services/media';
-import { callAstraDirector, compileMotionPrompt, mockPlan, PlannerError, PROMPT_VERSION, type MotionPlan } from '../../src/providers/astra';
-import { sha256Hex, type Feeling } from '../../src/domain/helpers';
+import { callAstraDirector, compileMotionPrompt, mockPlan, PlannerError, type MotionPlan } from '../../src/providers/astra';
+import { type Feeling } from '../../src/domain/helpers';
+import { planCacheKey, readPlanCache, writePlanCache, imageHashFor } from '../../src/server/services/planning';
 import { done, retry, type TaskRow, type TaskResult } from './index';
 
 /** Phase 1: Astra motion plan (cached by image hash + style + direction + prompt version). */
@@ -20,13 +20,14 @@ export async function planGeneration(task: TaskRow): Promise<TaskResult> {
     await generationsService.fail(gen.id, 'output_invalid');
     return done;
   }
-  const bytes = await storage().read(normalized.storage_bucket, normalized.object_key);
+  const { bytes, hash } = await imageHashFor(normalized);
   const feeling = gen.input_snapshot.feeling as Feeling;
   const direction = gen.input_snapshot.direction ?? '';
-  const cacheKey = `plan:${sha256Hex(bytes)}:${feeling}:${sha256Hex(direction)}:${PROMPT_VERSION}:${env.PLANNER_PROVIDER}:${env.OPENAI_MODEL}`;
+  const cacheKey = planCacheKey(hash, feeling, direction);
 
-  let plan: MotionPlan | null = null;
-  const cached = await db.one<{ motion_plan: MotionPlan }>(
+  let plan: MotionPlan | null = await readPlanCache(cacheKey);
+  if (plan) console.log(`[plan] ${gen.id} cache hit (pre-planned)`);
+  const cached = plan ? null : await db.one<{ motion_plan: MotionPlan }>(
     `select motion_plan from public.generations where motion_plan is not null and motion_plan->>'_cache_key' = $1 and status in ('ready','processing','submitting','validating_output') order by created_at desc limit 1`,
     [cacheKey],
   );
@@ -53,6 +54,7 @@ export async function planGeneration(task: TaskRow): Promise<TaskResult> {
   const stored = { ...plan, _cache_key: cacheKey } as MotionPlan & { _cache_key: string };
   const prompt = compileMotionPrompt(plan) + (direction.trim() ? `\nUser direction (already reflected above, keep conservative): ${direction.trim().slice(0, 500)}` : '');
   await withTransaction(async (tx) => {
+    await writePlanCache(tx, cacheKey, gen.user_id, plan!);
     const moved = await generationsService.transition(tx, gen.id, ['planning'], 'submitting', { motionPlan: stored, compiledPrompt: prompt, phaseDetail: plan!.summary });
     if (moved) await enqueue(tx, 'submit_generation', `submit:${gen.id}`, { generationId: gen.id, userId: gen.user_id });
   });

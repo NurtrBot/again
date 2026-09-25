@@ -13,7 +13,7 @@ import { runMaintenance } from './maintenance';
 
 const WORKER_ID = `${hostname()}-${process.pid}-${randomUUID().slice(0, 6)}`;
 const LEASE_SECONDS = 60;
-const POLL_IDLE_MS = 1500;
+const POLL_IDLE_MS = 500;
 let stopping = false;
 
 async function heartbeat() {

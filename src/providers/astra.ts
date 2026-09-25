@@ -59,7 +59,7 @@ export function buildAstraRequest(input: { imageDataUrl: string; feeling: Feelin
   return {
     model: input.model,
     store: false,
-    reasoning: { effort: 'medium' },
+    reasoning: { effort: getEnv().ASTRA_REASONING_EFFORT },
     max_output_tokens: 6000,
     instructions: DIRECTOR_INSTRUCTIONS,
     input: [
@@ -67,7 +67,7 @@ export function buildAstraRequest(input: { imageDataUrl: string; feeling: Feelin
         role: 'user',
         content: [
           { type: 'input_text', text: JSON.stringify({ selected_feeling: input.feeling, creative_direction: input.direction, duration_seconds: 10 }) },
-          { type: 'input_image', image_url: input.imageDataUrl, detail: 'high' },
+          { type: 'input_image', image_url: input.imageDataUrl, detail: getEnv().ASTRA_IMAGE_DETAIL },
         ],
       },
     ],

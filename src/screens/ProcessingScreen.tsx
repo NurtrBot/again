@@ -116,7 +116,7 @@ export function ProcessingScreen({ demo, review, job: initial, draftId, credits:
         // Polling errors are not job failures.
       }
       if (Date.now() - started.current > 4 * 60_000) setSlow(true);
-      delay = Math.min(8000, Math.round(delay * 1.4));
+      delay = Math.min(4000, Math.round(delay * 1.3));
       timer.current = setTimeout(tick, delay);
     };
     timer.current = setTimeout(tick, delay);
