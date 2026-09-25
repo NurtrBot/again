@@ -2996,3 +2996,27 @@ p {
   min-height: 56px;
   font-size: 22px;
 }
+
+.example-panel {
+  width: 100%;
+  max-width: 440px;
+  background: var(--ink);
+  color: #fff;
+  border-radius: 12px;
+  padding: 6px 10px 10px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+}
+.example-panel__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.85);
+  padding-left: 4px;
+}
+.example-panel video {
+  width: 100%;
+  border-radius: 8px;
+  background: #000;
+}

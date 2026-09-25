@@ -85,16 +85,16 @@ export function WelcomeScreen({ demo, review, signedIn, sampleSrc, sampleVideo }
       </div>
 
       {playing && sampleVideo ? (
-        <div className="scrim" role="dialog" aria-modal="true" aria-label="Example film" onClick={() => setPlaying(false)}>
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
-            <div style={{ width: '100%', maxWidth: 440 }} onClick={(e) => e.stopPropagation()}>
-              <div className="row-between text-white" style={{ marginBottom: 8 }}>
-                <span className="mono">Example · Evening at home · made with again.</span>
+        <div className="scrim" role="dialog" aria-modal="true" aria-label="Example film" onClick={() => setPlaying(false)} style={{ background: 'rgba(12, 14, 17, 0.86)' }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16 }}>
+            <div className="example-panel" onClick={(e) => e.stopPropagation()}>
+              <div className="example-panel__head">
+                <span>Example · Evening at home · made with again.</span>
                 <button type="button" className="icon-btn" aria-label="Close" onClick={() => setPlaying(false)}>
                   <Close />
                 </button>
               </div>
-              <video src={sampleVideo} controls autoPlay loop playsInline style={{ width: '100%', borderRadius: 4, background: '#000' }} />
+              <video src={sampleVideo} controls autoPlay loop playsInline />
             </div>
           </div>
         </div>
