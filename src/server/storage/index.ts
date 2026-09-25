@@ -1,6 +1,7 @@
 import { getEnv } from '../env';
 import { LocalStorage } from './local';
 import { SupabaseStorage } from './supabase';
+import { BlobStorage } from './blob';
 
 export type Bucket = 'sources' | 'normalized' | 'films' | 'thumbnails';
 export const BUCKETS: Bucket[] = ['sources', 'normalized', 'films', 'thumbnails'];
@@ -12,7 +13,7 @@ export interface SignedUpload {
 }
 
 export interface StorageDriver {
-  readonly name: 'local' | 'supabase';
+  readonly name: 'local' | 'supabase' | 'blob';
   createSignedUpload(bucket: Bucket, key: string, opts: { contentType: string; byteLength: number; ttlSeconds: number }): Promise<SignedUpload>;
   /** Short-lived read URL for the browser (absolute or same-origin path). */
   signedReadUrl(bucket: Bucket, key: string, opts: { ttlSeconds: number; contentType?: string; download?: string | null }): Promise<string>;
@@ -30,7 +31,7 @@ let driver: StorageDriver | null = null;
 export function storage(): StorageDriver {
   if (driver) return driver;
   const env = getEnv();
-  driver = env.STORAGE_DRIVER === 'supabase' ? new SupabaseStorage() : new LocalStorage();
+  driver = env.STORAGE_DRIVER === 'supabase' ? new SupabaseStorage() : env.STORAGE_DRIVER === 'blob' ? new BlobStorage() : new LocalStorage();
   return driver;
 }
 

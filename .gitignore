@@ -16,3 +16,4 @@ e2e/__screenshots__/**/*-diff.png
 .worker.log
 .next-dev.log
 .data/
+.vercel

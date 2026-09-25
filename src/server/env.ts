@@ -26,7 +26,8 @@ const schema = z.object({
   SUPABASE_SERVICE_ROLE_KEY: str(''),
   OAUTH_PROVIDERS: str(''),
 
-  STORAGE_DRIVER: z.enum(['local', 'supabase']).default('local'),
+  STORAGE_DRIVER: z.enum(['local', 'supabase', 'blob']).default('local'),
+  BLOB_READ_WRITE_TOKEN: str(''),
   LOCAL_MEDIA_DIR: str('.data/media'),
   PUBLIC_MEDIA_BASE_URL: str(''),
 
