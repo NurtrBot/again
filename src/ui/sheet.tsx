@@ -14,14 +14,15 @@ export function Sheet({
   onClose: () => void;
   label: string;
   children: ReactNode;
-  restoreFocusTo?: HTMLElement | null;
+  restoreFocusTo?: HTMLElement | null | (() => HTMLElement | null);
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const opener = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
-    opener.current = (restoreFocusTo ?? (document.activeElement as HTMLElement | null)) || null;
+    const target = typeof restoreFocusTo === 'function' ? restoreFocusTo() : restoreFocusTo;
+    opener.current = (target ?? (document.activeElement as HTMLElement | null)) || null;
     const node = ref.current;
     const focusables = () =>
       Array.from(node?.querySelectorAll<HTMLElement>('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])') ?? []).filter(

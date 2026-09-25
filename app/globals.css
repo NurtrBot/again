@@ -1779,8 +1779,8 @@ p {
   position: relative;
 }
 .otp__cell {
-  aspect-ratio: 1 / 1.35;
-  min-height: 72px;
+  aspect-ratio: 1 / 1.44;
+  min-width: 0;
   border: 1.5px solid var(--line);
   border-radius: 6px;
   display: flex;

@@ -34,14 +34,16 @@ export function VerifyScreen({ demo, review, challengeId, reviewCode, reviewEmai
 
   useEffect(() => {
     if (review) return;
-    try {
-      setEmail(sessionStorage.getItem('again:auth-email') ?? '');
-      setDemoCode(sessionStorage.getItem('again:demo-code'));
-      const r = Number(sessionStorage.getItem('again:auth-resend') ?? 0);
-      if (r > 0) setCooldown(r);
-    } catch {
-      /* ignore */
-    }
+    const t = setTimeout(() => {
+      try {
+        setEmail(sessionStorage.getItem('again:auth-email') ?? '');
+        setDemoCode(sessionStorage.getItem('again:demo-code'));
+        const r = Number(sessionStorage.getItem('again:auth-resend') ?? 0);
+        if (r > 0) setCooldown(r);
+      } catch {
+        /* ignore */
+      }
+    }, 0);
     let url: string | null = null;
     getLocalDraft().then((d) => {
       if (d) {
@@ -51,6 +53,7 @@ export function VerifyScreen({ demo, review, challengeId, reviewCode, reviewEmai
     });
     inputRef.current?.focus();
     return () => {
+      clearTimeout(t);
       if (url) URL.revokeObjectURL(url);
     };
   }, [review]);
@@ -64,13 +67,13 @@ export function VerifyScreen({ demo, review, challengeId, reviewCode, reviewEmai
   const digits = code.replace(/\D/g, '').slice(0, 6);
   const complete = digits.length === 6;
 
-  async function submit(e?: React.FormEvent) {
+  async function submit(e?: React.FormEvent, value = digits) {
     e?.preventDefault();
-    if (review || !complete || pending) return;
+    if (review || value.length !== 6 || pending) return;
     setPending(true);
     setError(null);
     try {
-      const res = await api.auth.verify(currentChallenge, digits);
+      const res = await api.auth.verify(currentChallenge, value);
       try {
         sessionStorage.removeItem('again:demo-code');
         sessionStorage.removeItem('again:auth-resend');
@@ -115,16 +118,11 @@ export function VerifyScreen({ demo, review, challengeId, reviewCode, reviewEmai
     }
   }
 
-  useEffect(() => {
-    if (complete && !review && !pending && !error) void submit();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [complete]);
-
   const activeIndex = Math.min(digits.length, 5);
 
   return (
-    <Shell theme="white" demo={demo}>
-      {demo && demoCode ? <DemoBanner text={`Demo mode — your sign-in code is ${demoCode}`} /> : null}
+    <Shell theme="white" demo={demo && !demoCode}>
+      {demo && demoCode ? <DemoBanner text={`Demo mode — no payments or real generation. Your sign-in code is ${demoCode}`} /> : null}
       <Header backHref="/auth" />
       <div className="shell__body">
         <h1 className="display" style={{ marginTop: 58, fontSize: 'clamp(2.5rem, 12.8vw, 3.25rem)' }}>
@@ -161,7 +159,9 @@ export function VerifyScreen({ demo, review, challengeId, reviewCode, reviewEmai
               value={digits}
               onChange={(e) => {
                 setError(null);
-                setCode(e.target.value.replace(/\D/g, '').slice(0, 6));
+                const next = e.target.value.replace(/\D/g, '').slice(0, 6);
+                setCode(next);
+                if (next.length === 6) void submit(undefined, next); // auto-submit on the sixth digit / paste
               }}
               onFocus={() => setFocused(true)}
               onBlur={() => setFocused(false)}

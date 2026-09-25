@@ -41,13 +41,20 @@ export function GalleryScreen(props: GalleryProps) {
   const moreRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const now = reviewNow ? new Date(reviewNow) : undefined;
 
-  useEffect(() => setFilms(props.films), [props.films]);
+  // Derive local list/rename state from props when the route re-renders (React "adjust state on prop change" pattern).
+  const [prevFilms, setPrevFilms] = useState(props.films);
+  if (prevFilms !== props.films) {
+    setPrevFilms(props.films);
+    setFilms(props.films);
+  }
+  const [prevRenameId, setPrevRenameId] = useState(props.renameId ?? null);
+  if ((props.renameId ?? null) !== prevRenameId) {
+    setPrevRenameId(props.renameId ?? null);
+    if (props.renameId && !review) setRenaming(films.find((f) => f.id === props.renameId) ?? null);
+  }
 
   const actionsFilm = props.actionsId ? films.find((f) => f.id === props.actionsId) ?? null : null;
   const deleteFilm = props.deleteId ? films.find((f) => f.id === props.deleteId) ?? null : null;
-  useEffect(() => {
-    if (props.renameId && !review) setRenaming(films.find((f) => f.id === props.renameId) ?? null);
-  }, [props.renameId, films, review]);
 
   // Preserve scroll position when returning from playback.
   useEffect(() => {
@@ -274,7 +281,7 @@ export function GalleryScreen(props: GalleryProps) {
       </Link>
 
       {/* 19: actions sheet */}
-      <Sheet open={!!actionsFilm && !deleteFilm && !renaming} onClose={closeSheet} label={`Actions for ${actionsFilm?.title ?? 'film'}`} restoreFocusTo={actionsFilm ? moreRefs.current[actionsFilm.id] : null}>
+      <Sheet open={!!actionsFilm && !deleteFilm && !renaming} onClose={closeSheet} label={`Actions for ${actionsFilm?.title ?? 'film'}`} restoreFocusTo={() => (actionsFilm ? moreRefs.current[actionsFilm.id] ?? null : null)}>
         {actionsFilm ? (
           <>
             <div className="sheet__head">
@@ -345,7 +352,7 @@ export function GalleryScreen(props: GalleryProps) {
       </Sheet>
 
       {/* 21: delete confirmation */}
-      <Sheet open={!!deleteFilm} onClose={closeSheet} label="Delete this film?" restoreFocusTo={deleteFilm ? moreRefs.current[deleteFilm.id] : null}>
+      <Sheet open={!!deleteFilm} onClose={closeSheet} label="Delete this film?" restoreFocusTo={() => (deleteFilm ? moreRefs.current[deleteFilm.id] ?? null : null)}>
         {deleteFilm ? (
           <>
             <div className="dialog-thumb">

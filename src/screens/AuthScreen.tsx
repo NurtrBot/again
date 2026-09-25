@@ -43,12 +43,16 @@ export function AuthScreen({ demo, review, oauthProviders, returnTo, reviewThumb
 
   useEffect(() => {
     if (review) return;
-    try {
-      const saved = sessionStorage.getItem('again:auth-email');
-      if (saved) setEmail(saved);
-    } catch {
-      /* ignore */
-    }
+    // sessionStorage is an external store; read it asynchronously to avoid a synchronous setState in the effect body.
+    const t = setTimeout(() => {
+      try {
+        const saved = sessionStorage.getItem('again:auth-email');
+        if (saved) setEmail(saved);
+      } catch {
+        /* ignore */
+      }
+    }, 0);
+    return () => clearTimeout(t);
   }, [review]);
 
   async function submit(e: React.FormEvent) {

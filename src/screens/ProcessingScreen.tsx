@@ -44,12 +44,13 @@ export function ProcessingScreen({ demo, review, job: initial, draftId, credits:
   const [error, setError] = useState<string | null>(null);
   const [slow, setSlow] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const started = useRef(Date.now());
+  const started = useRef(0);
 
   const terminal = job.status === 'ready' || job.status === 'failed' || job.status === 'abandoned';
 
   useEffect(() => {
     if (review || terminal) return;
+    if (!started.current) started.current = Date.now();
     let delay = 2000;
     let cancelled = false;
     const tick = async () => {
