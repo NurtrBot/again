@@ -64,6 +64,13 @@ export async function trimTo(video: string, out: string, seconds: number): Promi
   await exec(FFMPEG, ['-y', '-i', video, '-t', seconds.toFixed(3), '-c:v', 'libx264', '-preset', 'medium', '-crf', '18', '-c:a', 'aac', '-b:a', '160k', '-movflags', '+faststart', out], { timeout: 300_000 });
 }
 
+/** High-quality upscale to a target long edge (lanczos + light unsharp), high-bitrate H.264, audio copied. */
+export async function upscaleTo(video: string, out: string, longEdge: number, dims: { width: number; height: number }): Promise<void> {
+  const landscape = dims.width >= dims.height;
+  const scale = landscape ? `scale=${longEdge}:-2:flags=lanczos` : `scale=-2:${longEdge}:flags=lanczos`;
+  await exec(FFMPEG, ['-y', '-i', video, '-vf', `${scale},unsharp=5:5:0.35:5:5:0.0,format=yuv420p`, '-c:v', 'libx264', '-preset', 'medium', '-crf', '17', '-profile:v', 'high', '-level', '5.1', '-c:a', 'copy', '-movflags', '+faststart', out], { timeout: 600_000 });
+}
+
 /** Normalize container for playback (faststart) without re-encoding when possible. */
 export async function remuxFaststart(video: string, out: string): Promise<void> {
   await exec(FFMPEG, ['-y', '-i', video, '-c', 'copy', '-movflags', '+faststart', out], { timeout: 120_000 });

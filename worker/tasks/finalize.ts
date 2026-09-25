@@ -7,7 +7,7 @@ import { generationsService } from '../../src/server/services/generations';
 import { storage, objectKey } from '../../src/server/storage';
 import type { MediaRow } from '../../src/server/services/media';
 import { videoProvider } from '../../src/providers/video';
-import { probe, extractPoster, remuxFaststart, trimTo, tempDir, sampleFrames } from '../../src/providers/ffmpeg';
+import { probe, extractPoster, remuxFaststart, trimTo, tempDir, sampleFrames, upscaleTo } from '../../src/providers/ffmpeg';
 import { callQualityReview } from '../../src/providers/astra';
 import { sha256Hex, withinDurationTolerance } from '../../src/domain/helpers';
 import { done, retry, type TaskRow, type TaskResult } from './index';
@@ -68,6 +68,16 @@ export async function finalizeGeneration(task: TaskRow): Promise<TaskResult> {
       await remuxFaststart(raw, muxed);
       final = muxed;
       meta = await probe(final);
+    }
+    const minEdge = getEnv().OUTPUT_MIN_LONG_EDGE;
+    if (minEdge > 0 && Math.max(meta.width, meta.height) < minEdge) {
+      const up = join(t.dir, 'upscaled.mp4');
+      const t0 = Date.now();
+      await upscaleTo(final, up, minEdge, { width: meta.width, height: meta.height });
+      const before = `${meta.width}x${meta.height}`;
+      final = up;
+      meta = await probe(final);
+      console.log(`[finalize] ${gen.id} upscaled ${before} -> ${meta.width}x${meta.height} in ${((Date.now() - t0) / 1000).toFixed(0)}s`);
     }
     if (!withinDurationTolerance(meta.durationSeconds)) {
       console.error(`[finalize] ${gen.id} duration ${meta.durationSeconds}s outside tolerance`);

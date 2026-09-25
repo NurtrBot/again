@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 import { COPY } from '@/src/domain/copy';
 import { FAILURE_COPY, type Job } from '@/src/domain/types';
 import { Alert, Check } from '@/src/ui/icons';
+import { RevealCanvas } from '@/src/ui/reveal-canvas';
 import { Button, Corners, CreditPill, Header, HeaderLink, Shell, ratioOf } from '@/src/ui/primitives';
 import { api, ApiFailure, newIdempotencyKey } from '@/src/ui/api';
 
@@ -226,8 +227,14 @@ export function ProcessingScreen({ demo, review, job: initial, draftId, credits:
         <div className="viewfinder viewfinder--white" style={{ marginTop: 22 }}>
           <div className="photo photo--auto" style={{ ['--ar' as string]: '350/258', borderRadius: 0 }}>
             {job.sourcePreviewUrl ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={job.sourcePreviewUrl} alt="Your original photo (not the finished film)" />
+              <RevealCanvas
+                src={job.sourcePreviewUrl}
+                alt="Your original photo, building up while the film is made (not the finished film)"
+                startedAt={job.createdAt}
+                expectedSeconds={job.expectedSeconds ?? 150}
+                status={job.status}
+                fixedProgress={review ? 0.55 : undefined}
+              />
             ) : null}
           </div>
           <Corners />

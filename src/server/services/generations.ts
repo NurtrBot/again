@@ -31,6 +31,19 @@ export interface GenerationRow {
 
 const ACTIVE = `('queued','planning','submitting','submission_unknown','processing','validating_output')`;
 
+let expectedCache: { value: number; at: number } | null = null;
+async function expectedSeconds(): Promise<number> {
+  if (expectedCache && Date.now() - expectedCache.at < 60_000) return expectedCache.value;
+  const r = await db.one<{ med: string | null }>(
+    `select percentile_cont(0.5) within group (order by extract(epoch from (settled_at - created_at)))::text as med
+     from (select created_at, settled_at from public.generations where status='ready' and settled_at is not null order by settled_at desc limit 12) t`,
+  );
+  const med = Number(r?.med ?? 0);
+  const value = Number.isFinite(med) && med > 20 ? Math.min(900, Math.round(med)) : 150;
+  expectedCache = { value, at: Date.now() };
+  return value;
+}
+
 async function project(row: GenerationRow): Promise<Job> {
   const film = await db.one<{ id: string }>('select id from public.films where generation_id=$1', [row.id]);
   const source = await db.one<MediaRow>('select * from public.media_assets where id=$1', [row.input_snapshot.sourceAssetId]);
@@ -48,6 +61,7 @@ async function project(row: GenerationRow): Promise<Job> {
     sourceWidth: source?.width ?? undefined,
     sourceHeight: source?.height ?? undefined,
     planSummary: (row.motion_plan?.summary as string | undefined) ?? null,
+    expectedSeconds: await expectedSeconds(),
   };
 }
 

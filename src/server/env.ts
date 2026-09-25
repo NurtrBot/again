@@ -41,6 +41,8 @@ const schema = z.object({
   ASTRA_REASONING_EFFORT: z.enum(['low', 'medium', 'high']).default('medium'),
   ASTRA_IMAGE_DETAIL: z.enum(['low', 'high', 'auto']).default('high'),
   PREPLAN_ON_DIRECTION: bool(false),
+  /** Minimum long edge for delivered films (0 = keep the provider's native size). Lanczos upscale + light sharpen; not true detail. */
+  OUTPUT_MIN_LONG_EDGE: int(0),
   QUALITY_REVIEW_ENABLED: bool(false),
   QUALITY_RETRY_LIMIT: int(0),
   MAX_ACTIVE_JOBS_PER_USER: int(2),

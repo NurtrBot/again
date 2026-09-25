@@ -86,6 +86,8 @@ export interface Job {
   sourceWidth?: number;
   sourceHeight?: number;
   planSummary?: string | null;
+  /** Median seconds from Animate to Ready over recent films (for pacing the reveal; never shown as a percentage). */
+  expectedSeconds?: number;
 }
 
 export type FilmStatus = 'creating' | 'ready' | 'failed';

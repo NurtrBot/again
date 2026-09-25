@@ -8,6 +8,8 @@ for (const [id, b] of Object.entries(bounds as Record<string, { cssH: number; na
     await page.setViewportSize({ width: 390, height: b.cssH });
     await page.goto(`/review/${id}`, { waitUntil: 'networkidle' });
     await page.evaluate(() => document.fonts.ready);
+    // Canvas-based reveals mark themselves once the first tiles are painted.
+    await page.waitForFunction(() => Array.from(document.querySelectorAll('canvas')).every((c) => (c as HTMLElement).dataset.drawn === '1'), null, { timeout: 5000 }).catch(() => {});
     await expect(page).toHaveScreenshot(`${id}.png`, { fullPage: false });
   });
 }
