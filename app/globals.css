@@ -2739,18 +2739,18 @@ p {
 
 /* ---------- Welcome v2 (owner mockup, Sep 25) ---------- */
 .welcome-shell .header {
-  min-height: 48px;
-  padding-top: 6px;
+  min-height: 44px;
+  padding-top: 2px;
   padding-bottom: 0;
 }
 .welcome__title {
-  margin-top: 6px;
+  margin-top: 4px;
   font-size: clamp(3rem, 15vw, 4.1rem);
-  line-height: 0.87;
+  line-height: 0.83;
   letter-spacing: -0.05em;
 }
 .welcome__sub {
-  margin-top: 8px;
+  margin-top: 5px;
   font-size: 17px;
   font-weight: 500;
   color: #fff;
