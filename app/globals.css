@@ -3194,3 +3194,190 @@ p {
 .auth__legal .link {
   font-weight: 400;
 }
+
+/* ---------- Help v2 (owner mockup, Sep 25) ---------- */
+.help-shell {
+  background: #f8f8fa;
+}
+.help__title {
+  margin-top: 10px;
+  font-size: clamp(2.9rem, 14.4vw, 3.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.05em;
+}
+.help-steps {
+  display: grid;
+  grid-template-columns: 1fr 20px 1fr 20px 1fr;
+  align-items: start;
+  gap: 4px;
+  list-style: none;
+  margin: 22px 0 0;
+  padding: 26px 12px 22px;
+  background: var(--soft-blue);
+  border-radius: 16px;
+}
+.help-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  text-align: center;
+}
+.help-step__art {
+  position: relative;
+  width: 84px;
+  height: 84px;
+  border-radius: 14px;
+}
+.help-step__art--photo {
+  overflow: visible;
+}
+.help-step__art--photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 14px;
+}
+.help-step__art--card {
+  background: #fff;
+  border: 2px solid var(--cobalt);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.help-step__waves {
+  width: 62px;
+  height: 40px;
+  color: var(--cobalt);
+}
+.help-step__play {
+  width: 40px;
+  height: 40px;
+  color: var(--cobalt);
+  margin-left: 4px;
+}
+.help-step__badge {
+  position: absolute;
+  right: -6px;
+  bottom: -6px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--cobalt);
+  color: #fff;
+  border: 2px solid #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.help-step__badge svg {
+  width: 14px;
+  height: 14px;
+}
+.help-step__label {
+  font-size: 15.5px;
+  line-height: 1.25;
+  color: var(--ink);
+  max-width: 6.5em;
+}
+.help-step__arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 84px;
+  color: var(--muted);
+}
+.help-step__arrow svg {
+  width: 18px;
+  height: 18px;
+}
+.help__section {
+  margin-top: 30px;
+  font-size: 30px;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+.faq {
+  margin-top: 14px;
+  border: 1.5px solid #e6e8ee;
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+.faq__item + .faq__item {
+  border-top: 1.5px solid #e6e8ee;
+}
+.faq__q {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  font-size: 17px;
+  font-weight: 600;
+  color: var(--ink);
+  text-align: left;
+}
+.faq__q svg {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  color: var(--cobalt);
+}
+.faq__item--open .faq__q {
+  background: var(--soft-blue);
+}
+.faq__a {
+  padding: 12px 16px 16px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--muted);
+}
+.help-card {
+  margin-top: 26px;
+  margin-bottom: 26px;
+  padding: 22px 18px 18px;
+  border-radius: 16px;
+  background: var(--cobalt);
+  color: #fff;
+}
+.help-card__head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+}
+.help-card__title {
+  font-size: 30px;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+.help-card__sub {
+  margin-top: 6px;
+  font-size: 17px;
+}
+.help-card__icon {
+  width: 34px;
+  height: 34px;
+  flex: none;
+}
+.help-card__cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 50px;
+  margin-top: 18px;
+  border-radius: 8px;
+  background: #fff;
+  color: var(--cobalt);
+  font-size: 19px;
+  font-weight: 700;
+}
+.help-card__cta svg {
+  width: 22px;
+  height: 22px;
+}

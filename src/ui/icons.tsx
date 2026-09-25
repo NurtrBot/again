@@ -308,3 +308,23 @@ export const Mail = (p: P) => (
     <path d="M3.5 7l8.5 6 8.5-6" />
   </svg>
 );
+
+export const Minus = (p: P) => (
+  <svg {...base({ ...p, strokeWidth: 2.4 })}>
+    <path d="M5 12h14" />
+  </svg>
+);
+export const ChatBubble = (p: P) => (
+  <svg {...base({ ...p, strokeWidth: 1.8 })}>
+    <path d="M12 4c-5 0-9 3.2-9 7.2 0 2.2 1.2 4.1 3.1 5.4L5 20l4.4-1.6c.8.2 1.7.3 2.6.3 5 0 9-3.2 9-7.2S17 4 12 4z" />
+    <circle cx="8.5" cy="11.5" r=".9" fill="currentColor" stroke="none" />
+    <circle cx="12" cy="11.5" r=".9" fill="currentColor" stroke="none" />
+    <circle cx="15.5" cy="11.5" r=".9" fill="currentColor" stroke="none" />
+  </svg>
+);
+export const MotionWaves = (p: P) => (
+  <svg {...base({ viewBox: '0 0 64 40', strokeWidth: 3, ...p })}>
+    <path d="M4 26c8-16 16-16 24-6s16 14 32 2" opacity=".35" />
+    <path d="M4 32c8-18 16-18 24-8s16 12 32 0" />
+  </svg>
+);
