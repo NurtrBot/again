@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { COPY } from '@/src/domain/copy';
 import type { Film } from '@/src/domain/types';
-import { Download, Ellipsis, Pencil, Play, PlayOutline, Plus, Share, Trash } from '@/src/ui/icons';
+import { Download, Ellipsis, FilmStrip, Pencil, Play, PlayOutline, Plus, Share, Trash } from '@/src/ui/icons';
 import { Button, Corners, CreditPill, Header, Shell } from '@/src/ui/primitives';
 import { Sheet } from '@/src/ui/sheet';
 import { api } from '@/src/ui/api';
@@ -38,6 +38,7 @@ export function GalleryScreen(props: GalleryProps) {
   const [example, setExample] = useState(false);
   const [renaming, setRenaming] = useState<Film | null>(null);
   const [deleting, setDeleting] = useState(false);
+  const [newestFirst, setNewestFirst] = useState(true);
   const moreRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const now = reviewNow ? new Date(reviewNow) : undefined;
 
@@ -186,99 +187,159 @@ export function GalleryScreen(props: GalleryProps) {
   }
 
   /* ---------- 09 / 19 / 21 ---------- */
+  const total = films.length;
+  const readyCount = films.filter((f) => f.status === 'ready').length;
+  const creatingCount = films.filter((f) => f.status === 'creating').length;
+  const plus = cursor ? '+' : '';
+  const ordered = newestFirst ? visible : [...visible].reverse();
+  const [hero, ...rest] = ordered;
+
+  const mediaFor = (f: Film, kind: 'hero' | 'card') => {
+    const cls = kind === 'hero' ? 'hero-card__media' : 'moment-card__media';
+    if (f.status === 'ready') {
+      return (
+        <Link href={`/films/${f.id}`} className={cls} aria-label={`Play ${f.title}`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {f.posterUrl ? <img src={f.posterUrl} alt="" /> : null}
+          {kind === 'hero' ? (
+            <span className="play-pill" aria-hidden>
+              <Play />
+              {COPY.s09.playFilm}
+            </span>
+          ) : (
+            <span className="play-badge" aria-hidden>
+              <Play />
+            </span>
+          )}
+          <span className="duration-badge">{formatTimecode(roundedSeconds(f.durationSeconds))}</span>
+        </Link>
+      );
+    }
+    if (f.status === 'creating') {
+      return (
+        <Link href={`/create/${f.draftId}/processing?job=${f.jobId}`} className={cls} aria-label={`${f.title}, creating`}>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          {f.posterUrl ? <img src={f.posterUrl} alt="" /> : null}
+          <span className="status-chip">
+            <span className="status-chip__spinner" aria-hidden />
+            {COPY.s09.creating}
+          </span>
+        </Link>
+      );
+    }
+    return (
+      <Link href={`/create/${f.draftId}/processing?job=${f.jobId}`} className={cls} aria-label={`${f.title}, didn’t finish`}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        {f.posterUrl ? <img src={f.posterUrl} alt="" style={{ opacity: 0.7 }} /> : null}
+        <span className="status-chip status-chip--failed">Didn’t finish</span>
+      </Link>
+    );
+  };
+  const subFor = (f: Film) =>
+    f.status === 'creating' ? (
+      COPY.s09.inProgress
+    ) : f.status === 'failed' ? (
+      <>
+        {f.creditReturned ? 'Credit returned · ' : 'Returning credit · '}
+        <Link href={`/create/${f.draftId}`} className="link link--cobalt" style={{ fontWeight: 500 }}>
+          Try again
+        </Link>
+      </>
+    ) : (
+      formatFilmDate(f.createdAt, now)
+    );
+  const moreButton = (f: Film, cls: string) => (
+    <button
+      ref={(el) => {
+        moreRefs.current[f.id] = el;
+      }}
+      type="button"
+      className={cls}
+      aria-label={`More actions for ${f.title}`}
+      aria-haspopup="dialog"
+      onClick={() => router.push(hrefWith({ actions: f.id }), { scroll: false })}
+    >
+      <Ellipsis />
+    </button>
+  );
+
   return (
     <Shell theme="white" nav="films" demo={demo} wide>
-      <Header brandStart end={<CreditPill credits={credits} />} />
+      <div className="gallery-head">
+        <Header brandStart end={<CreditPill credits={credits} />} />
+        <div className="gallery-head__row">
+          <div>
+            <h1 className="gallery-head__title">{COPY.s09.heading}</h1>
+            <p className="gallery-head__sub">{total ? COPY.s09.moments(total) : COPY.s09.sub}</p>
+          </div>
+          <Link href="/create" className="btn--white-pill">
+            <Plus strokeWidth={2.2} />
+            <span>{COPY.s09.newFilm}</span>
+          </Link>
+        </div>
+        <FilmStrip className="gallery-head__strip" aria-hidden />
+      </div>
       <div className="shell__body">
-        <h1 className="display" style={{ marginTop: 14, fontSize: 'clamp(2.75rem, 14.6vw, 3.6rem)' }}>
-          {COPY.s09.heading}
-        </h1>
-        <p className="lead" style={{ marginTop: 4, fontSize: 18, color: '#3d424a' }}>
-          {COPY.s09.sub}
-        </p>
-        <nav className="tabs tabs--start" style={{ marginTop: 14 }} aria-label="Filter films">
+        <nav className="gallery-tabs" aria-label="Filter films">
           {(['all', 'ready', 'creating'] as GalleryFilter[]).map((f, i) => (
-            <Link key={f} href={`/films${f === 'all' ? '' : `?filter=${f}`}`} className="tabs__tab" aria-current={filter === f ? 'page' : undefined} style={{ minWidth: 0, marginRight: i === 0 ? 40 : 66, paddingInline: i === 0 ? '30px 0' : 0, paddingLeft: i === 0 ? 30 : 0, marginLeft: i === 0 ? 0 : 0, fontSize: 18, minHeight: 44 }}>
+            <Link key={f} href={`/films${f === 'all' ? '' : `?filter=${f}`}`} className="tabs__tab" aria-current={filter === f ? 'page' : undefined}>
               {COPY.s09.tabs[i]}
+              <b>{(f === 'all' ? total : f === 'ready' ? readyCount : creatingCount) + plus}</b>
             </Link>
           ))}
+          <button type="button" className="gallery-sort" aria-pressed={!newestFirst} aria-label={newestFirst ? 'Sorted newest first. Switch to oldest first' : 'Sorted oldest first. Switch to newest first'} onClick={() => setNewestFirst((v) => !v)}>
+            {newestFirst ? COPY.s09.newest : COPY.s09.oldest}
+            <ArrowDown style={{ transform: newestFirst ? undefined : 'rotate(180deg)' }} />
+          </button>
         </nav>
 
-        <div className="gallery-grid" style={{ marginTop: 16 }}>
-          {visible.map((f) => (
-            <article key={f.id} className="film-row" aria-label={f.title}>
-              {f.status === 'ready' ? (
-                <Link href={`/films/${f.id}`} className="film-row__media" aria-label={`Play ${f.title}`}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {f.posterUrl ? <img src={f.posterUrl} alt="" /> : null}
-                  <span className="play-badge play-badge--center" aria-hidden>
-                    <Play />
-                  </span>
-                  <span className="duration-badge">{formatTimecode(roundedSeconds(f.durationSeconds))}</span>
-                </Link>
-              ) : f.status === 'creating' ? (
-                <Link href={`/create/${f.draftId}/processing?job=${f.jobId}`} className="film-row__media" aria-label={`${f.title}, creating`}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {f.posterUrl ? <img src={f.posterUrl} alt="" /> : null}
-                  <span className="status-chip">
-                    <span className="status-chip__spinner" aria-hidden />
-                    {COPY.s09.creating}
-                  </span>
-                </Link>
-              ) : (
-                <Link href={`/create/${f.draftId}/processing?job=${f.jobId}`} className="film-row__media" aria-label={`${f.title}, didn’t finish`}>
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  {f.posterUrl ? <img src={f.posterUrl} alt="" style={{ opacity: 0.7 }} /> : null}
-                  <span className="status-chip status-chip--failed">Didn’t finish</span>
-                </Link>
-              )}
-              <div className="film-row__meta">
-                <div>
-                  <div className="film-row__title">{f.title}</div>
-                  <div className="film-row__date">
-                    {f.status === 'creating' ? COPY.s09.inProgress : f.status === 'failed' ? (
-                      <>
-                        {f.creditReturned ? 'Credit returned · ' : 'Returning credit · '}
-                        <Link href={`/create/${f.draftId}`} className="link link--cobalt" style={{ fontWeight: 500 }}>
-                          Try again
-                        </Link>
-                      </>
-                    ) : (
-                      formatFilmDate(f.createdAt, now)
-                    )}
-                  </div>
+        {hero ? (
+          <section className="hero-card" style={{ marginTop: 18 }} aria-label={`Latest film: ${hero.title}`}>
+            <div className="eyebrow">{COPY.s09.latest}</div>
+            {mediaFor(hero, 'hero')}
+            <div className="hero-card__meta">
+              <div>
+                <div className="hero-card__title">{hero.title}</div>
+                <div className="film-row__date" style={{ fontSize: 14 }}>
+                  {subFor(hero)}
                 </div>
-                <button
-                  ref={(el) => {
-                    moreRefs.current[f.id] = el;
-                  }}
-                  type="button"
-                  className="film-row__more"
-                  aria-label={`More actions for ${f.title}`}
-                  aria-haspopup="dialog"
-                  onClick={() => router.push(hrefWith({ actions: f.id }), { scroll: false })}
-                >
-                  <Ellipsis />
-                </button>
               </div>
-            </article>
-          ))}
-        </div>
-        {visible.length === 0 ? (
-          <p className="helper" style={{ marginTop: 12 }}>
+              {moreButton(hero, 'film-row__more')}
+            </div>
+          </section>
+        ) : (
+          <p className="helper" style={{ marginTop: 16 }}>
             {filter === 'creating' ? 'Nothing is being created right now.' : 'No finished films yet.'}
           </p>
+        )}
+
+        {rest.length ? (
+          <section style={{ marginTop: 18 }} aria-label="More moments">
+            <div className="eyebrow">{COPY.s09.more}</div>
+            <div className="moments-grid">
+              {rest.map((f) => (
+                <article key={f.id} className="moment-card" aria-label={f.title}>
+                  {mediaFor(f, 'card')}
+                  <div className="moment-card__meta">
+                    <div style={{ minWidth: 0 }}>
+                      <div className="moment-card__title">{f.title}</div>
+                      {f.status !== 'ready' ? <div className="moment-card__sub">{subFor(f)}</div> : null}
+                    </div>
+                    {moreButton(f, 'moment-card__more')}
+                  </div>
+                </article>
+              ))}
+            </div>
+          </section>
         ) : null}
         {cursor ? (
-          <Button variant="outline" size="sm" onClick={loadMore} pending={loadingMore} style={{ marginTop: 8, marginBottom: 24 }}>
+          <Button variant="outline" size="sm" onClick={loadMore} pending={loadingMore} style={{ marginTop: 20, marginBottom: 24 }}>
             Load more
           </Button>
-        ) : null}
+        ) : (
+          <div style={{ height: 20 }} />
+        )}
       </div>
-
-      <Link href="/create" className="fab" aria-label="Create a new film">
-        <Plus strokeWidth={2.2} />
-      </Link>
 
       {/* 19: actions sheet */}
       <Sheet open={!!actionsFilm && !deleteFilm && !renaming} onClose={closeSheet} label={`Actions for ${actionsFilm?.title ?? 'film'}`} restoreFocusTo={() => (actionsFilm ? moreRefs.current[actionsFilm.id] ?? null : null)}>
@@ -410,6 +471,15 @@ export function GalleryScreen(props: GalleryProps) {
         ) : null}
       </Sheet>
     </Shell>
+  );
+}
+
+function ArrowDown(p: { style?: React.CSSProperties }) {
+  return (
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden width="16" height="16" style={p.style}>
+      <path d="M12 5v14" />
+      <path d="M6 13l6 6 6-6" />
+    </svg>
   );
 }
 

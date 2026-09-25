@@ -90,7 +90,28 @@ export const olderFilm: Film = {
   creditReturned: false,
 };
 
-export const galleryFilms: Film[] = [readyFilm, creatingFilm, olderFilm];
+const extra = (id: string, title: string, poster: string, createdAt: string): Film => ({
+  id,
+  draftId: 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa',
+  jobId: 'bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbbbbb',
+  title,
+  status: 'ready',
+  posterUrl: poster,
+  originalUrl: poster,
+  playbackUrl: null,
+  durationSeconds: 10,
+  createdAt,
+  creditReturned: false,
+});
+
+/** 09 review: five ready films (hero + 2×2 grid), matching the "All 5 · Ready 5 · Creating 0" mock. */
+export const galleryFilms: Film[] = [
+  readyFilm,
+  extra('99999999-9999-4999-8999-999999999991', 'Mountain escape', SAMPLE.restaurant, '2026-09-24T18:00:00.000Z'),
+  extra('99999999-9999-4999-8999-999999999992', 'Afternoon light', SAMPLE.family, '2026-09-23T12:00:00.000Z'),
+  extra('99999999-9999-4999-8999-999999999993', 'Those blue eyes', SAMPLE.dog, '2026-09-22T12:00:00.000Z'),
+  { ...olderFilm, title: 'Under the pier', posterUrl: SAMPLE.restaurant, originalUrl: SAMPLE.restaurant },
+];
 
 export const creditsThree: Credits = { available: 3, held: 0, purchasedAvailable: 3, monthlyAvailable: 0, nextExpiryAt: null };
 export const creditsTwo: Credits = { available: 2, held: 1, purchasedAvailable: 2, monthlyAvailable: 0, nextExpiryAt: null };

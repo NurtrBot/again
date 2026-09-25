@@ -1,13 +1,13 @@
 'use client';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { COPY } from '@/src/domain/copy';
 import type { Film } from '@/src/domain/types';
-import { ImageIcon, Pause, Play, PlusCircle, Share } from '@/src/ui/icons';
-import { Button, Header, Shell, ratioOf } from '@/src/ui/primitives';
+import { CheckCircle, ChevronRight, Download, FilmIcon, Fullscreen, ImageIcon, Pause, Pencil, Play, Share, Speaker, ViewfinderPlus } from '@/src/ui/icons';
+import { Button, Corners, Header, Shell, ratioOf } from '@/src/ui/primitives';
 import { api } from '@/src/ui/api';
-import { formatTimecode, roundedSeconds } from '@/src/ui/format';
+import { formatLongDate, formatTimecode, roundedSeconds } from '@/src/ui/format';
 import { toast } from '@/src/ui/toast';
 
 export interface FilmProps {
@@ -16,16 +16,19 @@ export interface FilmProps {
   film: Film;
 }
 
-export function FilmScreen({ demo, review, film }: FilmProps) {
+export function FilmScreen({ demo, review, film: initialFilm }: FilmProps) {
   const router = useRouter();
   const videoRef = useRef<HTMLVideoElement>(null);
+  const [film, setFilm] = useState(initialFilm);
   const [playing, setPlaying] = useState(false);
-  const [time, setTime] = useState(review ? 4 : 0);
+  const [time, setTime] = useState(review ? 6 : 0);
   const [duration, setDuration] = useState(film.durationSeconds ?? 10);
-  const [comparing, setComparing] = useState(false);
+  const [view, setView] = useState<'photo' | 'film'>('film');
   const [muted, setMuted] = useState(true);
   const resumeRef = useRef<{ wasPlaying: boolean; t: number } | null>(null);
   const [saving, setSaving] = useState(false);
+  const [editing, setEditing] = useState(false);
+  const [titleDraft, setTitleDraft] = useState(film.title);
 
   useEffect(() => {
     if (review) return;
@@ -57,35 +60,43 @@ export function FilmScreen({ demo, review, film }: FilmProps) {
   function togglePlay() {
     const v = videoRef.current;
     if (!v) return;
+    if (view === 'photo') showFilm();
     if (v.paused) v.play().catch(() => {});
     else v.pause();
   }
 
-  function unmute() {
+  function toggleMute() {
     const v = videoRef.current;
     if (!v) return;
     v.muted = !v.muted;
     setMuted(v.muted);
   }
 
-  const startCompare = useCallback(() => {
+  function fullscreen() {
+    const v = videoRef.current as (HTMLVideoElement & { webkitEnterFullscreen?: () => void }) | null;
+    if (!v) return;
+    if (v.requestFullscreen) v.requestFullscreen().catch(() => v.webkitEnterFullscreen?.());
+    else v.webkitEnterFullscreen?.();
+  }
+
+  /** Photo view: pause and overlay the original; Film view restores exact time and play state. */
+  function showPhoto() {
     const v = videoRef.current;
-    if (comparing) return;
+    if (view === 'photo') return;
     resumeRef.current = { wasPlaying: !!v && !v.paused, t: v?.currentTime ?? 0 };
     v?.pause();
-    setComparing(true);
-  }, [comparing]);
-
-  const endCompare = useCallback(() => {
+    setView('photo');
+  }
+  function showFilm() {
     const v = videoRef.current;
     const r = resumeRef.current;
-    setComparing(false);
+    setView('film');
     if (v && r) {
       v.currentTime = r.t;
       if (r.wasPlaying) v.play().catch(() => {});
     }
     resumeRef.current = null;
-  }, []);
+  }
 
   function seek(e: React.ChangeEvent<HTMLInputElement>) {
     const v = videoRef.current;
@@ -108,6 +119,26 @@ export function FilmScreen({ demo, review, film }: FilmProps) {
       toast('Saving your film…', { tone: 'cobalt' });
     } finally {
       setTimeout(() => setSaving(false), 1200);
+    }
+  }
+
+  async function commitTitle() {
+    const clean = titleDraft.trim().slice(0, 80);
+    setEditing(false);
+    if (!clean || clean === film.title || review) {
+      setTitleDraft(film.title);
+      return;
+    }
+    const prev = film.title;
+    setFilm((f) => ({ ...f, title: clean }));
+    try {
+      const updated = await api.films.rename(film.id, clean);
+      setFilm((f) => ({ ...f, title: updated.title }));
+      setTitleDraft(updated.title);
+    } catch {
+      setFilm((f) => ({ ...f, title: prev }));
+      setTitleDraft(prev);
+      toast('We couldn’t rename that film.');
     }
   }
 
@@ -138,95 +169,130 @@ export function FilmScreen({ demo, review, film }: FilmProps) {
     <Shell theme="dark" demo={demo}>
       <Header brandStart closeHref="/films" />
       <div className="shell__body">
-        <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.78)', marginTop: 2 }}>
-          {COPY.s08.saved}
-          <Link href="/films" className="link" style={{ color: '#fff', fontWeight: 400, textDecoration: 'none' }}>
+        <Link href="/films" className="saved-row">
+          <CheckCircle strokeWidth={1.6} />
+          <span>
+            {COPY.s08.saved}
             {COPY.s08.savedLink}
-          </Link>
-        </p>
-        <h1 className="display" style={{ marginTop: 8, fontSize: 'clamp(2.5rem, 12.6vw, 3.25rem)' }}>
+          </span>
+        </Link>
+        <h1 className="display" style={{ marginTop: 10, fontSize: 'clamp(2.75rem, 13.6vw, 3.5rem)' }}>
           {COPY.s08.heading}
         </h1>
 
-        <div className="photo photo--auto" style={{ ['--ar' as string]: ratio, marginTop: 20, borderRadius: 0, maxHeight: 420 }}>
-          {film.playbackUrl && !review ? (
-            <video ref={videoRef} src={film.playbackUrl} poster={film.posterUrl ?? undefined} playsInline preload="metadata" loop muted onClick={togglePlay} />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={film.posterUrl ?? film.originalUrl ?? ''} alt={`${film.title} poster`} />
-          )}
-          {film.originalUrl ? (
-            <div className={`compare${comparing ? ' compare--on' : ''}`} aria-hidden={!comparing}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={film.originalUrl} alt="Original photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+        <div className="player-card">
+          <div className="player-card__frame">
+            <span className="film-tag">{view === 'photo' ? 'YOUR PHOTO' : COPY.s08.yourFilm}</span>
+            <div className="photo photo--auto" style={{ ['--ar' as string]: ratio, maxHeight: 460 }}>
+              {film.playbackUrl && !review ? (
+                <video ref={videoRef} src={film.playbackUrl} poster={film.posterUrl ?? undefined} playsInline preload="metadata" loop muted onClick={togglePlay} />
+              ) : (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img src={film.posterUrl ?? film.originalUrl ?? ''} alt={`${film.title} poster`} />
+              )}
+              {film.originalUrl ? (
+                <div className={`compare${view === 'photo' ? ' compare--on' : ''}`} aria-hidden={view !== 'photo'}>
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={film.originalUrl} alt="Original photo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                </div>
+              ) : null}
+              {film.isDemoRender ? (
+                <span className="example-tag" style={{ left: 'auto', right: 10, bottom: 10 }}>
+                  Demo render
+                </span>
+              ) : null}
             </div>
-          ) : null}
-          {film.isDemoRender ? <span className="example-tag">Demo render</span> : null}
-        </div>
-
-        <div className="player">
-          <button type="button" className="player__btn" aria-label={playing ? 'Pause' : 'Play'} onClick={togglePlay}>
-            {playing || review ? <Pause /> : <Play />}
-          </button>
-          <span className="player__time">{formatTimecode(time)}</span>
-          <div className="player__track">
-            <span className="player__rail" aria-hidden />
-            <span className="player__fill" style={{ width: `${pct}%` }} aria-hidden />
-            <span className="player__thumb" style={{ left: `${pct}%` }} aria-hidden />
-            <input className="player__range" type="range" min={0} max={duration || 10} step={0.05} value={time} onChange={seek} aria-label="Seek" aria-valuetext={formatTimecode(time)} />
+            <Corners />
           </div>
-          <span className="player__time" style={{ textAlign: 'right' }}>
-            {formatTimecode(total)}
-          </span>
-          {!review ? (
-            <button type="button" className="link" style={{ color: '#fff', fontSize: 12, fontWeight: 500, marginLeft: 4 }} onClick={unmute} aria-pressed={!muted}>
-              {muted ? 'Sound on' : 'Mute'}
+          <div className="player">
+            <button type="button" className="player__btn player__btn--icon" aria-label={playing ? 'Pause' : 'Play'} onClick={togglePlay}>
+              {playing || review ? <Pause /> : <Play />}
             </button>
-          ) : null}
+            <span className="player__time">{formatTimecode(time)}</span>
+            <div className="player__track">
+              <span className="player__rail" aria-hidden />
+              <span className="player__fill" style={{ width: `${pct}%` }} aria-hidden />
+              <span className="player__thumb" style={{ left: `${pct}%` }} aria-hidden />
+              <input className="player__range" type="range" min={0} max={duration || 10} step={0.05} value={time} onChange={seek} aria-label="Seek" aria-valuetext={formatTimecode(time)} />
+            </div>
+            <span className="player__time" style={{ textAlign: 'right' }}>
+              {formatTimecode(total)}
+            </span>
+            <button type="button" className="player__btn player__btn--icon" aria-label={muted ? 'Turn sound on' : 'Mute'} aria-pressed={!muted} onClick={toggleMute}>
+              <Speaker muted={muted && !review} />
+            </button>
+            <button type="button" className="player__btn player__btn--icon" aria-label="Fullscreen" onClick={fullscreen}>
+              <Fullscreen />
+            </button>
+          </div>
         </div>
 
-        <button
-          type="button"
-          className="btn btn--outline"
-          style={{ marginTop: 6, fontSize: 19, fontWeight: 500, gap: 16 }}
-          aria-pressed={comparing}
-          aria-label="Press and hold to see the original photo"
-          onPointerDown={(e) => {
-            e.preventDefault();
-            startCompare();
-          }}
-          onPointerUp={endCompare}
-          onPointerLeave={() => comparing && endCompare()}
-          onPointerCancel={endCompare}
-          onKeyDown={(e) => {
-            if (e.key === ' ' || e.key === 'Enter') {
-              e.preventDefault();
-              if (comparing) endCompare();
-              else startCompare();
-            }
-          }}
-          onContextMenu={(e) => e.preventDefault()}
-        >
-          <ImageIcon style={{ width: 28, height: 28 }} />
-          <span>{comparing ? 'Release to see film' : COPY.s08.pressToSee}</span>
-        </button>
+        <div className="film-title-row">
+          {editing ? (
+            <input
+              className="film-title-input"
+              value={titleDraft}
+              maxLength={80}
+              autoFocus
+              aria-label="Film title"
+              onChange={(e) => setTitleDraft(e.target.value)}
+              onBlur={commitTitle}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  e.preventDefault();
+                  void commitTitle();
+                }
+                if (e.key === 'Escape') {
+                  setTitleDraft(film.title);
+                  setEditing(false);
+                }
+              }}
+            />
+          ) : (
+            <>
+              <h2 className="film-title">{film.title}</h2>
+              <button type="button" className="icon-btn" aria-label="Rename film" onClick={() => setEditing(true)}>
+                <Pencil strokeWidth={1.8} />
+              </button>
+            </>
+          )}
+        </div>
+        <div className="film-date">{formatLongDate(film.createdAt)}</div>
 
-        <div className="btn-row" style={{ marginTop: 20 }}>
-          <Button pending={saving} onClick={save} style={{ fontSize: 24 }}>
-            {COPY.s08.save}
-          </Button>
-          <Link href={`/films/${film.id}/share`} className="btn btn--outline btn--square" aria-label="Share film">
-            <Share />
+        <div className="seg" role="radiogroup" aria-label="Show photo or film">
+          <button type="button" role="radio" aria-checked={view === 'photo'} className="seg__opt" onClick={showPhoto}>
+            <ImageIcon strokeWidth={1.8} />
+            <span>{COPY.s08.photo}</span>
+          </button>
+          <button type="button" role="radio" aria-checked={view === 'film'} className="seg__opt" onClick={showFilm}>
+            <Play />
+            <span>{COPY.s08.film}</span>
+          </button>
+        </div>
+
+        <Button className="btn--download" icon={<Download strokeWidth={2.2} />} pending={saving} onClick={save}>
+          {COPY.s08.download}
+        </Button>
+        <div className="film-actions">
+          <Link href={`/films/${film.id}/share`} className="btn btn--outline">
+            <Share strokeWidth={2} />
             <span>{COPY.s08.share}</span>
           </Link>
-        </div>
-
-        <div className="row-center" style={{ marginTop: 'auto', paddingTop: 30, paddingBottom: 26 }}>
-          <Link href="/create" className="row-center" style={{ textDecoration: 'none', color: '#fff', fontSize: 17, gap: 14 }}>
-            <PlusCircle style={{ width: 36, height: 36 }} strokeWidth={1.6} />
-            <span>{COPY.s08.another}</span>
+          <Link href="/films" className="btn btn--outline">
+            <FilmIcon strokeWidth={2} />
+            <span>{COPY.s08.myFilms}</span>
           </Link>
         </div>
+
+        <Link href="/create" className="another-row" style={{ marginBottom: 12 }}>
+          <span className="another-row__icon">
+            <ViewfinderPlus strokeWidth={2} />
+          </span>
+          <span>{COPY.s08.anotherMoment}</span>
+          <span className="another-row__chev">
+            <ChevronRight />
+          </span>
+        </Link>
       </div>
     </Shell>
   );

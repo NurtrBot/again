@@ -231,3 +231,48 @@ export const Google = (p: P) => (
   </svg>
 );
 export const Spinner = (p: P) => <span className="btn__spinner" role="status" aria-label="Loading" {...(p as object)} />;
+export const Speaker = (p: P & { muted?: boolean }) => {
+  const { muted, ...rest } = p;
+  return (
+    <svg {...base(rest)}>
+      <path d="M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z" />
+      {muted ? (
+        <>
+          <path d="M16 9.5l4 5" />
+          <path d="M20 9.5l-4 5" />
+        </>
+      ) : (
+        <>
+          <path d="M15.5 9.5a3.5 3.5 0 0 1 0 5" />
+          <path d="M18 7a7 7 0 0 1 0 10" />
+        </>
+      )}
+    </svg>
+  );
+};
+export const Fullscreen = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M4 9V4h5" />
+    <path d="M20 9V4h-5" />
+    <path d="M4 15v5h5" />
+    <path d="M20 15v5h-5" />
+  </svg>
+);
+export const FilmStrip = (p: P) => (
+  <svg {...base({ viewBox: '0 0 56 32', strokeWidth: 1.8, ...p })}>
+    <rect x="3" y="7" width="16" height="20" rx="1.5" transform="rotate(-8 11 17)" />
+    <rect x="20" y="5" width="16" height="22" rx="1.5" />
+    <rect x="37" y="7" width="16" height="20" rx="1.5" transform="rotate(8 45 17)" />
+    <path d="M22 9h3M22 13h3M22 19h3M22 23h3M31 9h3M31 13h3M31 19h3M31 23h3" strokeWidth="1.4" />
+  </svg>
+);
+export const ViewfinderPlus = (p: P) => (
+  <svg {...base(p)}>
+    <path d="M4 8V4h4" />
+    <path d="M20 8V4h-4" />
+    <path d="M4 16v4h4" />
+    <path d="M20 16v4h-4" />
+    <path d="M12 8.5v7" />
+    <path d="M8.5 12h7" />
+  </svg>
+);

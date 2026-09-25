@@ -47,8 +47,8 @@ test('guest upload → sign in → onboarding → direction → animate → read
   await expect(page).toHaveURL(/\/films\/[0-9a-f-]{36}$/, { timeout: 180_000 });
   await expect(page.getByRole('heading', { name: /Now it’s/ })).toBeVisible();
   await expect(page.locator('video')).toHaveAttribute('src', /\/media\/films\//);
-  await page.getByRole('button', { name: /Press and hold/ }).dispatchEvent('pointerdown');
-  await page.getByRole('button', { name: /Press and hold/ }).dispatchEvent('pointerup');
+  await page.getByRole('radio', { name: 'Photo' }).click();
+  await page.getByRole('radio', { name: 'Film' }).click();
   // gallery
   await page.getByRole('link', { name: 'My films' }).first().click();
   await expect(page).toHaveURL(/\/films$/);
