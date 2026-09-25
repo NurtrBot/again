@@ -2,8 +2,10 @@ import { readFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 /** Minimal dotenv for scripts and the worker (Next.js loads .env.local itself). */
+/** Loads .env then .env.local (or the file named by ENV_FILE, e.g. ENV_FILE=.env.hosted npm run worker). */
 export function loadEnv(cwd = process.cwd()) {
-  for (const name of ['.env', '.env.local']) {
+  const files = process.env.ENV_FILE ? ['.env', process.env.ENV_FILE] : ['.env', '.env.local'];
+  for (const name of files) {
     const file = resolve(cwd, name);
     if (!existsSync(file)) continue;
     for (const raw of readFileSync(file, 'utf8').split('\n')) {

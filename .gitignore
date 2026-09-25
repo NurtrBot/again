@@ -18,3 +18,4 @@ e2e/__screenshots__/**/*-diff.png
 .data/
 .vercel
 .env.vercel
+.env.hosted
