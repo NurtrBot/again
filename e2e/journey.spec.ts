@@ -15,7 +15,10 @@ async function signIn(page: Page, email: string) {
   await expect(banner).toContainText(/code is \d{6}/);
   const code = (await banner.textContent())!.match(/(\d{6})/)![1];
   await page.locator('.otp__input').fill(code);
-  await page.getByRole('button', { name: 'Continue' }).click();
+  // six digits auto-submit; click only if still enabled
+  const cont = page.getByRole('button', { name: 'Continue' });
+  if (await cont.isEnabled().catch(() => false)) await cont.click().catch(() => {});
+  await page.waitForURL((u) => !u.pathname.startsWith('/auth'), { timeout: 30_000 });
 }
 
 test('guest upload → sign in → onboarding → direction → animate → ready → gallery → delete', async ({ page }) => {
@@ -44,8 +47,8 @@ test('guest upload → sign in → onboarding → direction → animate → read
   await expect(page).toHaveURL(/\/films\/[0-9a-f-]{36}$/, { timeout: 180_000 });
   await expect(page.getByRole('heading', { name: /Now it’s/ })).toBeVisible();
   await expect(page.locator('video')).toHaveAttribute('src', /\/media\/films\//);
-  await page.getByRole('button', { name: 'Press to see photo' }).dispatchEvent('pointerdown');
-  await page.getByRole('button', { name: 'Press to see photo' }).dispatchEvent('pointerup');
+  await page.getByRole('button', { name: /Press and hold/ }).dispatchEvent('pointerdown');
+  await page.getByRole('button', { name: /Press and hold/ }).dispatchEvent('pointerup');
   // gallery
   await page.getByRole('link', { name: 'My films' }).first().click();
   await expect(page).toHaveURL(/\/films$/);
@@ -55,16 +58,16 @@ test('guest upload → sign in → onboarding → direction → animate → read
   await page.getByRole('button', { name: 'Rename' }).click();
   await page.getByRole('textbox', { name: /title/i }).fill('Beach day');
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByText('Beach day')).toBeVisible();
+  await expect(page.locator('.film-row__title', { hasText: 'Beach day' })).toBeVisible();
   await page.getByRole('button', { name: /More actions/ }).first().click();
-  await page.getByRole('button', { name: 'Share' }).click();
+  await page.getByRole('dialog').getByRole('link', { name: 'Share' }).click();
   await expect(page).toHaveURL(/\/share$/);
   await expect(page.getByRole('heading', { name: /Pass the/ })).toBeVisible();
-  await page.goBack();
+  await page.goto('/films');
   await page.getByRole('button', { name: /More actions/ }).first().click();
-  await page.getByRole('button', { name: 'Delete film' }).click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete film' }).click();
   await expect(page.getByRole('heading', { name: 'Delete this film?' })).toBeVisible();
-  await page.getByRole('button', { name: 'Delete film' }).last().click();
+  await page.getByRole('dialog').getByRole('button', { name: 'Delete film' }).click();
   await expect(page.getByRole('heading', { name: /Your first film/ })).toBeVisible({ timeout: 15_000 });
 });
 

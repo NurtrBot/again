@@ -40,7 +40,7 @@ export const PROMPT_VERSION = 'director-v1';
 export function validatePlan(value: unknown, feeling: Feeling): MotionPlan {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new PlannerError('INVALID_PLAN');
   const v = value as Record<string, unknown>;
-  const keys = Object.keys(v).filter((k) => k !== '_demo');
+  const keys = Object.keys(v).filter((k) => !k.startsWith('_')); // internal markers (_demo, _cache_key, _quality_review) are ignored
   if (keys.length !== MOTION_PLAN_SCHEMA.required.length || MOTION_PLAN_SCHEMA.required.some((k) => !(k in v))) throw new PlannerError('INVALID_PLAN_FIELDS');
   for (const [key, def] of Object.entries(MOTION_PLAN_SCHEMA.properties)) {
     const x = v[key];
