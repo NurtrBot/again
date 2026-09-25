@@ -58,6 +58,8 @@ export const COPY = {
     tenSec: '10 SEC',
     changePhoto: 'Change photo',
     heading: 'Make it move.',
+    chooseFeeling: 'Choose the feeling',
+    tenSecPill: '10 sec',
     addDirection: 'Add your own direction',
     cta: 'Animate photo',
     note: 'Uses 1 credit · 10-second video',
