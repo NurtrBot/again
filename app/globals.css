@@ -3020,3 +3020,104 @@ p {
   border-radius: 8px;
   background: #000;
 }
+
+/* ---------- Purchase complete v2 (owner mockup, Sep 25) ---------- */
+.ready {
+  align-items: center;
+  text-align: center;
+}
+.ready__art {
+  position: relative;
+  width: 210px;
+  margin-top: 44px;
+}
+.ready__art img {
+  width: 100%;
+  height: auto;
+}
+.ready__art--pending img {
+  opacity: 0.55;
+}
+.ready__spinner {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 44px;
+  height: 44px;
+  margin: -22px 0 0 -22px;
+  border-radius: 50%;
+  border: 4px solid rgba(255, 255, 255, 0.5);
+  border-top-color: #fff;
+  animation: spin 0.9s linear infinite;
+}
+.ready__title {
+  margin-top: 14px;
+  font-size: clamp(2.6rem, 12vw, 3.25rem);
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+}
+.ready__added {
+  margin-top: 18px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 27px;
+  letter-spacing: -0.03em;
+}
+.ready__card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 54px;
+  margin-top: 20px;
+  padding: 0 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.2);
+  font-size: 17px;
+  text-align: left;
+}
+.ready__card strong {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.ready__line {
+  margin-top: 18px;
+  font-size: 17px;
+  color: rgba(255, 255, 255, 0.92);
+  max-width: 320px;
+}
+.ready__actions {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 40px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.ready__cta.btn {
+  border-radius: 999px;
+  min-height: 54px;
+  font-size: 22px;
+}
+.ready__films {
+  font-size: 18px;
+  font-weight: 700;
+  color: #fff;
+  text-decoration: none;
+  padding: 6px 12px;
+}
+.ready__receipt {
+  font-size: 15px;
+  font-weight: 400;
+  color: rgba(255, 255, 255, 0.85);
+}
+.ready__foot {
+  margin-top: 28px;
+  padding-bottom: 28px;
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.85);
+}

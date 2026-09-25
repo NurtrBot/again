@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { COPY } from '@/src/domain/copy';
 import { formatUsd } from '@/src/domain/catalog';
 import type { PaymentStatus } from '@/src/domain/types';
-import { Check } from '@/src/ui/icons';
 import { Button, Header, Shell } from '@/src/ui/primitives';
 import { api } from '@/src/ui/api';
 
@@ -57,75 +56,71 @@ export function PurchaseCompleteScreen({ demo, review, sessionId, initial }: Pur
 
   return (
     <Shell theme="cobalt" demo={demo}>
-      <Header brandStart />
-      <div className="shell__body" style={{ alignItems: 'center', textAlign: 'center' }}>
-        <div className={`check-ring${fulfilled || failed ? '' : ' notice--pending'}`} style={{ marginTop: 6, borderRightColor: fulfilled || failed ? undefined : 'transparent', animation: fulfilled || failed ? undefined : 'spin 0.9s linear infinite' }} aria-hidden>
-          {fulfilled ? <Check strokeWidth={1.8} /> : null}
+      <Header brandStart closeHref={fulfilled && status.draftId ? `/create/${status.draftId}` : '/create'} />
+      <div className="shell__body ready">
+        <div className={`ready__art${!fulfilled && !failed ? ' ready__art--pending' : ''}`} aria-hidden>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/samples/ready-tile.png" alt="" />
+          {!fulfilled && !failed ? <span className="ready__spinner" /> : null}
         </div>
 
         {failed ? (
           <>
-            <h1 className="display" style={{ marginTop: 22 }} role="alert">
-              Payment didn’t go through.
+            <h1 className="display ready__title" role="alert">
+              Payment didn’t{'\n'}go through.
             </h1>
-            <p style={{ marginTop: 14, fontSize: 17 }}>No credits were added and nothing was charged. Your photo and selection are saved.</p>
-            <Button variant="outline" href="/credits" arrow style={{ marginTop: 30 }}>
-              Back to credits
-            </Button>
+            <p className="ready__line">No credits were added and nothing was charged. Your photo and selection are saved.</p>
+            <div className="ready__actions">
+              <Button href="/credits" arrow className="ready__cta">
+                Back to credits
+              </Button>
+            </div>
           </>
         ) : !fulfilled ? (
           <>
-            <h1 className="display" style={{ marginTop: 22 }} aria-live="polite">
+            <h1 className="display ready__title" aria-live="polite">
               {COPY.s13.confirming}
             </h1>
-            <p style={{ marginTop: 14, fontSize: 17, maxWidth: 320 }}>
+            <p className="ready__line">
               {timedOut
                 ? 'This is taking longer than usual. Your bank may still be confirming. Credits appear automatically once the payment settles — you can safely leave this page.'
                 : 'We’re waiting for the payment provider to confirm. This usually takes a few seconds.'}
             </p>
             {timedOut ? (
-              <Button variant="outline" href="/account" style={{ marginTop: 30 }}>
-                Go to my account
-              </Button>
+              <div className="ready__actions">
+                <Button href="/account" className="ready__cta">
+                  Go to my account
+                </Button>
+              </div>
             ) : null}
           </>
         ) : (
           <>
-            <h1 className="display" style={{ marginTop: 12, fontSize: 'clamp(2.5rem, 13vw, 3.25rem)' }}>
-              {COPY.s13.heading}
-            </h1>
-            <div className="big-num" style={{ marginTop: 14 }} aria-hidden>
-              {status.creditsAdded}
-            </div>
-            <div className="display display--section" style={{ marginTop: 6, fontSize: 34, letterSpacing: '-0.035em' }}>
-              <span className="visually-hidden">{status.creditsAdded} </span>
-              {COPY.s13.added}
-            </div>
+            <h1 className="display ready__title">{COPY.s13.heading}</h1>
+            <p className="ready__added">
+              {status.creditsAdded} credit{status.creditsAdded === 1 ? '' : 's'} added
+            </p>
             {amount ? (
-              <div style={{ color: '#fff', marginTop: 8, fontSize: 15, letterSpacing: '0.04em' }}>
-                {isSub ? COPY.s13.monthly(formatUsd(status.amountTotalCents ?? 0, { trimZeros: true })) : COPY.s13.oneTime(amount)}
+              <div className="ready__card">
+                <span>{isSub ? COPY.s13.monthlyLabel : COPY.s13.oneTimeLabel}</span>
+                <strong>{isSub ? `${formatUsd(status.amountTotalCents ?? 0, { trimZeros: true })}/mo` : amount}</strong>
               </div>
             ) : null}
-            {status.draftPreviewUrl ? (
-              <div className="photo" style={{ width: '100%', aspectRatio: '350/176', marginTop: 16, borderRadius: 4 }}>
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={status.draftPreviewUrl} alt="Your saved photo" />
-              </div>
-            ) : null}
-            <div style={{ color: '#fff', marginTop: 10, fontSize: 15, letterSpacing: '0.04em' }}>
-              {status.draftId ? COPY.s13.ready : 'Your credits are ready in your account.'}
-            </div>
-            <Button variant="primary" arrow href={status.draftId ? `/create/${status.draftId}` : '/create'} style={{ marginTop: 14 }}>
-              {status.draftId ? COPY.s13.cta : COPY.s13.ctaNoDraft}
-            </Button>
-            {status.receiptUrl ? (
-              <Link href={status.receiptUrl} className="link" style={{ marginTop: 18, fontSize: 17, fontWeight: 400 }} target="_blank" rel="noopener">
-                {COPY.s13.receipt}
+            <p className="ready__line">{COPY.s13.tagline}</p>
+            <div className="ready__actions">
+              <Button href={status.draftId ? `/create/${status.draftId}` : '/create'} arrow className="ready__cta">
+                {COPY.s13.cta}
+              </Button>
+              <Link href="/films" className="ready__films">
+                {COPY.s13.myFilms}
               </Link>
-            ) : null}
-            <div style={{ color: '#fff', marginTop: 'auto', paddingTop: 18, paddingBottom: 26, fontSize: 14, letterSpacing: '0.04em' }}>
-              {isSub ? 'Renews monthly until canceled. Manage it in your account.' : COPY.s13.noSub}
+              {status.receiptUrl ? (
+                <Link href={status.receiptUrl} className="link ready__receipt" target="_blank" rel="noopener">
+                  {COPY.s13.receipt}
+                </Link>
+              ) : null}
             </div>
+            <div className="ready__foot">{isSub ? COPY.s13.renews : COPY.s13.noSub}</div>
           </>
         )}
       </div>
