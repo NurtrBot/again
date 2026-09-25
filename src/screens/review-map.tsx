@@ -15,14 +15,11 @@ import { AccountScreen } from './AccountScreen';
 import { BillingScreen } from './BillingScreen';
 import { CATALOG } from '@/src/domain/catalog';
 import { SAMPLE, draft, job, failedJob, readyFilm, galleryFilms, profile, creditsFive, creditsSubscriber, subscriptionActive, subscriptionNone, reviewCheckout, reviewPaymentStatus } from '@/src/fixtures/review';
+import { INSPIRATION } from '@/src/fixtures/review';
 
 const REVIEW_NOW = '2026-09-25T15:04:00.000Z';
 
-const SAMPLES = [
-  { src: SAMPLE.dog, video: SAMPLE.dogVideo, label: 'Dog on the beach' },
-  { src: SAMPLE.family, video: '/samples/family-park.mp4', label: 'Family in the park' },
-  { src: SAMPLE.restaurant, video: '/samples/restaurant.mp4', label: 'Restaurant at night' },
-];
+const SAMPLES = INSPIRATION;
 
 export const REVIEW_NAMES: Record<string, string> = {
   '01': 'Welcome',

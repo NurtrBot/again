@@ -8,3 +8,6 @@ These files exist so the app can show labeled examples without shipping a board 
 - `*.mp4` next to them are **demo renders produced locally by `npm run samples:build`** (a slow push-in of the still, made with ffmpeg). They are explicitly labeled "Example" in the UI and are not AI-generated films.
 
 Launch requirement: replace with separately licensed or owned examples and acknowledge that sample pixels then differ from the boards.
+
+## Real films (added Sep 25, 2026)
+- `evening-home.mp4/.jpg` and `restaurant-film.mp4/.jpg` — actual again. outputs (Kling 3.0 via Higgsfield) supplied by the owner, re-encoded to 1280px for the inspiration strip. Labeled "made with again." in the UI. The restaurant one derives from the owner's watermarked source photo; confirm rights before public marketing use.

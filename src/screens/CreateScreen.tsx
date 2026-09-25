@@ -15,7 +15,7 @@ export interface CreateProps {
   demo?: boolean;
   review?: boolean;
   credits: number;
-  samples: Array<{ src: string; video: string; label: string }>;
+  samples: Array<{ src: string; video: string; label: string; real?: boolean }>;
   /** Local (pre-auth) draft id to claim on mount. */
   localDraftId?: string | null;
   /** Error variant (screen 17). */
@@ -38,7 +38,7 @@ export function CreateScreen(props: CreateProps) {
   const shutterRef = useRef<HTMLButtonElement>(null);
   const [progress, setProgress] = useState<UploadProgress | null>(null);
   const [claiming, setClaiming] = useState(!!localDraftId && !review);
-  const [example, setExample] = useState<string | null>(null);
+  const [example, setExample] = useState<{ video: string; label: string } | null>(null);
   const [inlineError, setInlineError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
 
@@ -226,7 +226,7 @@ export function CreateScreen(props: CreateProps) {
           <div style={{ fontSize: 15, fontWeight: 500, marginBottom: 8 }}>{COPY.s05.inspiration}</div>
           <div className="thumb-strip" role="list">
             {samples.map((s) => (
-              <button key={s.src} type="button" className="thumb-strip__item" role="listitem" aria-label={`Play example: ${s.label}`} onClick={() => setExample(s.video)}>
+              <button key={s.src} type="button" className="thumb-strip__item" role="listitem" aria-label={`Play example: ${s.label}`} onClick={() => setExample({ video: s.video, label: s.real ? `Example · ${s.label} · made with again.` : 'Example · demo render, not a user film' })}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img src={s.src} alt="" />
                 <span className="play-badge play-badge--sm play-badge--dark" aria-hidden>
@@ -237,7 +237,7 @@ export function CreateScreen(props: CreateProps) {
           </div>
         </div>
       </div>
-      {example ? <ExampleOverlay src={example} onClose={() => setExample(null)} /> : null}
+      {example ? <ExampleOverlay src={example.video} label={example.label} onClose={() => setExample(null)} /> : null}
       <Link href="/help" className="visually-hidden">
         How it works
       </Link>

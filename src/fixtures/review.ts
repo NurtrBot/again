@@ -8,7 +8,17 @@ export const SAMPLE = {
   dogVideo: '/samples/dog-beach.mp4',
   family: '/samples/family-park.jpg',
   restaurant: '/samples/restaurant.jpg',
+  eveningHome: '/samples/evening-home.jpg',
+  restaurantFilm: '/samples/restaurant-film.jpg',
 };
+
+/** Inspiration strip on Create. `real` = an actual again. film (Kling via Higgsfield); otherwise a labeled demo push-in. */
+export const INSPIRATION: Array<{ src: string; video: string; label: string; real?: boolean }> = [
+  { src: SAMPLE.eveningHome, video: '/samples/evening-home.mp4', label: 'Evening at home', real: true },
+  { src: SAMPLE.restaurantFilm, video: '/samples/restaurant-film.mp4', label: 'Yakitori night', real: true },
+  { src: SAMPLE.dog, video: SAMPLE.dogVideo, label: 'Dog on the beach' },
+  { src: SAMPLE.family, video: '/samples/family-park.mp4', label: 'Family in the park' },
+];
 
 const FIXED_NOW = '2026-09-25T15:04:00.000Z';
 
