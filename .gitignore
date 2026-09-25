@@ -17,3 +17,4 @@ e2e/__screenshots__/**/*-diff.png
 .next-dev.log
 .data/
 .vercel
+.env.vercel

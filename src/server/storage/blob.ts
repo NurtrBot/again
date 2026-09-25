@@ -25,7 +25,8 @@ export class BlobStorage implements StorageDriver {
     const validUntil = Date.now() + opts.ttlSeconds * 1000;
     const signed = await issueSignedToken({ token: this.token, pathname, operations: ['put'], validUntil, allowedContentTypes: [opts.contentType], maximumSizeInBytes: opts.byteLength });
     const { presignedUrl } = await presignUrl(signed, { operation: 'put', pathname, access: 'private', validUntil, allowedContentTypes: [opts.contentType], maximumSizeInBytes: opts.byteLength, allowOverwrite: false, addRandomSuffix: false });
-    return { url: presignedUrl, headers: { 'Content-Type': opts.contentType, 'x-content-type': opts.contentType }, expiresAt: new Date(validUntil) };
+    // Access level travels as a PUT header (not part of the presign); the browser sends exactly these headers.
+    return { url: presignedUrl, headers: { 'Content-Type': opts.contentType, 'x-content-type': opts.contentType, 'x-vercel-blob-access': 'private' }, expiresAt: new Date(validUntil) };
   }
   async signedReadUrl(bucket: Bucket, key: string, opts: { ttlSeconds: number; download?: string | null }) {
     const pathname = this.path(bucket, key);

@@ -30,7 +30,7 @@ export const localAuth = {
     await db.query('update public.auth_otp_challenges set code_hash=$2 where id=$1', [id, hashCode(id, code)]);
     const env = getEnv();
     const delivered = await sendMail({ to: email, ...signInCodeEmail(code, OTP_TTL_MIN) });
-    const demoCode = env.MAIL_DRIVER === 'console' && !env.isProduction ? code : undefined;
+    const demoCode = env.MAIL_DRIVER === 'console' && (!env.isProduction || env.ALLOW_DEMO_CODE) ? code : undefined;
     if (!delivered && !demoCode) throw new HttpError(503, 'mail_unavailable', 'We couldn’t send the code right now. Please try again shortly.');
     return { challengeId: id, resendAfterSeconds: RESEND_SECONDS, demoCode };
   },

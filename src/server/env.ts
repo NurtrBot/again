@@ -68,6 +68,8 @@ const schema = z.object({
   STRIPE_API_VERSION: str(''),
 
   DEV_SEED_CREDITS: int(0),
+  /** Test-only: show the sign-in code on screen even in production (no SMTP yet). Never leave on for real users. */
+  ALLOW_DEMO_CODE: bool(false),
   REVIEW_ROUTES_ENABLED: bool(false),
   SUPPORT_EMAIL: str('support@localhost'),
   HEIC_SUPPORTED: z.string().optional(),
