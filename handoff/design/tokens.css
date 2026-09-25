@@ -1,0 +1,30 @@
+/* Deterministic implementation baseline. Artwork remains visual authority. */
+:root {
+ --cobalt: #023bf3; /* modal sampled blue in original approved PNG */
+ --ink: #0c0e11; --paper: #ffffff; --muted: #676d76; --line: #d7dae1;
+ --canvas: #eff2f7; --soft-blue: #edf2ff; --danger: #c4223b;
+ --font-display: 'Inter Tight', 'Arial', sans-serif;
+ --font-body: 'Inter', 'Arial', sans-serif;
+ --font-mono: 'IBM Plex Mono', monospace;
+ --weight-display: 800; --tracking-display: -.045em; --leading-display: 1.02;
+ --text-xs: .75rem; --text-sm: .875rem; --text-body: 1rem;
+ --text-title: clamp(2.5rem, 10.5vw, 3.125rem);
+ --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px;
+ --space-5: 20px; --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px;
+ --page-gutter: 20px; --control-height: 56px; --touch-min: 48px;
+ --radius-control: 6px; --radius-sheet: 16px; --nav-height: 72px;
+ --ease-out: cubic-bezier(.22,1,.36,1); --motion-fast: 160ms; --motion-page: 280ms;
+}
+* { box-sizing: border-box; }
+body { margin:0; font-family:var(--font-body); background:var(--paper); color:var(--ink); }
+button,input,select,textarea { font:inherit; }
+input,select,textarea { font-size:16px; }
+button,a,input,textarea { -webkit-tap-highlight-color:transparent; }
+:focus-visible { outline:3px solid var(--cobalt); outline-offset:4px; }
+[data-theme=cobalt] { background:var(--cobalt); color:white; }
+[data-theme=dark] { background:var(--ink); color:white; }
+[data-theme=cobalt] :focus-visible,[data-theme=dark] :focus-visible { outline-color:white; }
+.mobile-shell { min-height:100svh; width:100%; max-width:480px; margin-inline:auto; }
+.has-nav { padding-bottom:calc(var(--nav-height) + env(safe-area-inset-bottom)); }
+.bottom-nav { min-height:var(--nav-height); padding-bottom:env(safe-area-inset-bottom); }
+@media(prefers-reduced-motion:reduce) { *,*::before,*::after { animation-duration:.01ms!important; transition-duration:.01ms!important; scroll-behavior:auto!important; } }

@@ -1,0 +1,50 @@
+{
+  "version": "2026-09-25-proposed",
+  "products": [
+    {
+      "code": "pack_1",
+      "name": "1 credit",
+      "credits": 1,
+      "amountCents": 499,
+      "currency": "usd",
+      "mode": "payment",
+      "interval": null
+    },
+    {
+      "code": "pack_5",
+      "name": "5 credits",
+      "credits": 5,
+      "amountCents": 1900,
+      "currency": "usd",
+      "mode": "payment",
+      "interval": null
+    },
+    {
+      "code": "pack_10",
+      "name": "10 credits",
+      "credits": 10,
+      "amountCents": 3500,
+      "currency": "usd",
+      "mode": "payment",
+      "interval": null
+    },
+    {
+      "code": "monthly_10",
+      "name": "Monthly",
+      "credits": 10,
+      "amountCents": 2900,
+      "currency": "usd",
+      "mode": "subscription",
+      "interval": "month"
+    },
+    {
+      "code": "creator_25",
+      "name": "Creator",
+      "credits": 25,
+      "amountCents": 5900,
+      "currency": "usd",
+      "mode": "subscription",
+      "interval": "month"
+    }
+  ]
+}

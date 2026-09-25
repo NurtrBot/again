@@ -1,0 +1,28 @@
+{
+  "summary": "Steam rises while the evening continues.",
+  "scene_type": "interior",
+  "motion_style": "gentle",
+  "camera": "A very gentle slow forward drift.",
+  "subject_motion": [
+    "The seated guest on the right blinks and shifts gaze slightly.",
+    "The cook makes a small tending motion while the curtain keeps the upper face hidden."
+  ],
+  "environment_motion": [
+    "Steam curls above the grill.",
+    "The curtain edges barely sway."
+  ],
+  "preserve": [
+    "Visible faces and clothing",
+    "Signage and watermark",
+    "Countertop and original light"
+  ],
+  "avoid": [
+    "New people",
+    "Large hand movements",
+    "Revealing the hidden face",
+    "Scene cuts"
+  ],
+  "audio": "Quiet grill sizzling and kitchen room tone",
+  "complexity": "high",
+  "caution": "Keep the cook’s partly obscured face obscured."
+}

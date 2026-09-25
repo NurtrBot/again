@@ -1,0 +1,59 @@
+{
+  "name": "again",
+  "version": "0.1.0",
+  "private": true,
+  "description": "again. — a private photo-to-video web app. Ten seconds of life for one photo.",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "dev": "next dev -p 3100",
+    "build": "next build",
+    "start": "next start -p 3100",
+    "worker": "tsx worker/main.ts",
+    "worker:dev": "tsx watch worker/main.ts",
+    "db:migrate": "tsx scripts/migrate.ts",
+    "db:reset": "tsx scripts/reset-db.ts",
+    "credits:grant": "tsx scripts/grant-credits.ts",
+    "samples:build": "tsx scripts/build-samples.ts",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:visual": "playwright test e2e/visual.spec.ts",
+    "handoff:test": "cd handoff && node --test tests/*.test.mjs"
+  },
+  "dependencies": {
+    "@stripe/react-stripe-js": "6.12.0",
+    "@stripe/stripe-js": "9.17.0",
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.117.2",
+    "ffmpeg-static": "5.3.0",
+    "ffprobe-static": "3.1.0",
+    "next": "16.3.6",
+    "nodemailer": "10.0.10",
+    "pg": "8.23.0",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "server-only": "^0.0.1",
+    "sharp": "0.35.4",
+    "stripe": "22.6.2",
+    "zod": "4.6.5"
+  },
+  "devDependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "@fontsource/inter": "^5.3.0",
+    "@fontsource/inter-tight": "^5.3.0",
+    "@playwright/test": "1.63.0",
+    "@types/node": "26.6.2",
+    "@types/nodemailer": "8.0.2",
+    "@types/pg": "8.23.1",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "9.39.5",
+    "eslint-config-next": "16.3.6",
+    "tsx": "4.23.15",
+    "typescript": "5.9.3",
+    "vitest": "5.0.2"
+  }
+}

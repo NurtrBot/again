@@ -1,0 +1,13 @@
+node_modules
+.next
+.data
+.env
+.env.local
+.env.*.local
+coverage
+test-results
+playwright-report
+e2e/__screenshots__/**/*-actual.png
+e2e/__screenshots__/**/*-diff.png
+*.log
+.DS_Store

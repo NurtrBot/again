@@ -1,0 +1,212 @@
+{
+ "01": {
+  "x": 28,
+  "y": 45,
+  "w": 467,
+  "h": 996,
+  "cssH": 832,
+  "route": "/review/01",
+  "name": "Welcome",
+  "theme": "cobalt"
+ },
+ "02": {
+  "x": 517,
+  "y": 46,
+  "w": 440,
+  "h": 993,
+  "cssH": 880,
+  "route": "/review/02",
+  "name": "Sign up or sign in",
+  "theme": "white"
+ },
+ "03": {
+  "x": 983,
+  "y": 46,
+  "w": 463,
+  "h": 993,
+  "cssH": 836,
+  "route": "/review/03",
+  "name": "Email verification",
+  "theme": "white"
+ },
+ "04": {
+  "x": 30,
+  "y": 49,
+  "w": 444,
+  "h": 989,
+  "cssH": 869,
+  "route": "/review/04",
+  "name": "Quick start",
+  "theme": "white"
+ },
+ "05": {
+  "x": 484,
+  "y": 49,
+  "w": 484,
+  "h": 990,
+  "cssH": 798,
+  "route": "/review/05",
+  "name": "Create",
+  "theme": "cobalt"
+ },
+ "06": {
+  "x": 989,
+  "y": 49,
+  "w": 456,
+  "h": 989,
+  "cssH": 846,
+  "route": "/review/06",
+  "name": "Direction",
+  "theme": "white"
+ },
+ "07": {
+  "x": 28,
+  "y": 47,
+  "w": 463,
+  "h": 989,
+  "cssH": 833,
+  "route": "/review/07",
+  "name": "Creating",
+  "theme": "cobalt"
+ },
+ "08": {
+  "x": 515,
+  "y": 47,
+  "w": 447,
+  "h": 989,
+  "cssH": 863,
+  "route": "/review/08",
+  "name": "Ready to watch",
+  "theme": "dark"
+ },
+ "09": {
+  "x": 986,
+  "y": 49,
+  "w": 459,
+  "h": 985,
+  "cssH": 837,
+  "route": "/review/09",
+  "name": "My films",
+  "theme": "white"
+ },
+ "10": {
+  "x": 27,
+  "y": 103,
+  "w": 461,
+  "h": 942,
+  "cssH": 797,
+  "route": "/review/10",
+  "name": "Buy credits",
+  "theme": "white"
+ },
+ "11": {
+  "x": 509,
+  "y": 103,
+  "w": 456,
+  "h": 942,
+  "cssH": 806,
+  "route": "/review/11",
+  "name": "Monthly plans",
+  "theme": "white"
+ },
+ "12": {
+  "x": 987,
+  "y": 103,
+  "w": 459,
+  "h": 942,
+  "cssH": 800,
+  "route": "/review/12",
+  "name": "Checkout",
+  "theme": "white"
+ },
+ "13": {
+  "x": 28,
+  "y": 44,
+  "w": 461,
+  "h": 995,
+  "cssH": 842,
+  "route": "/review/13",
+  "name": "Purchase complete",
+  "theme": "cobalt"
+ },
+ "14": {
+  "x": 514,
+  "y": 46,
+  "w": 446,
+  "h": 991,
+  "cssH": 867,
+  "route": "/review/14",
+  "name": "Account",
+  "theme": "white"
+ },
+ "15": {
+  "x": 986,
+  "y": 46,
+  "w": 459,
+  "h": 991,
+  "cssH": 842,
+  "route": "/review/15",
+  "name": "Manage membership",
+  "theme": "white"
+ },
+ "16": {
+  "x": 37,
+  "y": 91,
+  "w": 446,
+  "h": 943,
+  "cssH": 825,
+  "route": "/review/16",
+  "name": "Empty gallery",
+  "theme": "white"
+ },
+ "17": {
+  "x": 494,
+  "y": 103,
+  "w": 486,
+  "h": 930,
+  "cssH": 746,
+  "route": "/review/17",
+  "name": "Photo needs attention",
+  "theme": "white"
+ },
+ "18": {
+  "x": 991,
+  "y": 91,
+  "w": 450,
+  "h": 943,
+  "cssH": 817,
+  "route": "/review/18",
+  "name": "Generation failed",
+  "theme": "white"
+ },
+ "19": {
+  "x": 48,
+  "y": 114,
+  "w": 445,
+  "h": 919,
+  "cssH": 805,
+  "route": "/review/19",
+  "name": "Film actions",
+  "theme": "sheet"
+ },
+ "20": {
+  "x": 521,
+  "y": 114,
+  "w": 434,
+  "h": 920,
+  "cssH": 827,
+  "route": "/review/20",
+  "name": "Share film",
+  "theme": "dark"
+ },
+ "21": {
+  "x": 984,
+  "y": 114,
+  "w": 446,
+  "h": 919,
+  "cssH": 804,
+  "route": "/review/21",
+  "name": "Delete confirmation",
+  "theme": "sheet"
+ }
+}

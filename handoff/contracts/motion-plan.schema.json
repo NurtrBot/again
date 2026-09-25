@@ -1,0 +1,86 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "summary": {
+      "type": "string"
+    },
+    "scene_type": {
+      "type": "string",
+      "enum": [
+        "portrait",
+        "group",
+        "pet",
+        "landscape",
+        "product",
+        "interior",
+        "other"
+      ]
+    },
+    "motion_style": {
+      "type": "string",
+      "enum": [
+        "gentle",
+        "lively",
+        "surprise"
+      ]
+    },
+    "camera": {
+      "type": "string"
+    },
+    "subject_motion": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "environment_motion": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "preserve": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "avoid": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "audio": {
+      "type": "string"
+    },
+    "complexity": {
+      "type": "string",
+      "enum": [
+        "low",
+        "medium",
+        "high"
+      ]
+    },
+    "caution": {
+      "type": [
+        "string",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "summary",
+    "scene_type",
+    "motion_style",
+    "camera",
+    "subject_motion",
+    "environment_motion",
+    "preserve",
+    "avoid",
+    "audio",
+    "complexity",
+    "caution"
+  ]
+}

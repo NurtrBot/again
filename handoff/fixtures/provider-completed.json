@@ -1,0 +1,7 @@
+{
+  "request_id": "fixture-request-001",
+  "status": "completed",
+  "video": {
+    "url": "https://media.example.test/fixture.mp4"
+  }
+}
