@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { forwardRef, type ButtonHTMLAttributes, type ReactNode } from 'react';
 import { COPY } from '@/src/domain/copy';
 import { ArrowLeft, ArrowRight, Close, FilmIcon, PlusCircle, User } from './icons';
+import { useOffline } from './use-offline';
 
 export type Theme = 'cobalt' | 'white' | 'dark';
 
@@ -22,9 +23,15 @@ export function Shell({
   demo?: boolean;
   className?: string;
 }) {
+  const offline = useOffline();
   return (
     <div className={`shell${nav ? ' shell--has-nav' : ''}${wide ? ' shell--wide' : ''} ${className}`} data-theme={theme}>
       {demo ? <DemoBanner /> : null}
+      {offline ? (
+        <div className="offline-banner" role="status">
+          You’re offline. Nothing is sent until you’re back online.
+        </div>
+      ) : null}
       {children}
       {nav ? <BottomNav active={nav} theme={theme} /> : null}
     </div>
@@ -36,6 +43,22 @@ export function DemoBanner({ text }: { text?: string }) {
     <div className="demo-banner" role="note">
       {text ?? COPY.demoBanner}
     </div>
+  );
+}
+
+/** Plain header link for the right slot (e.g. "Skip", "My films"). */
+export function HeaderLink({ href, children, onClick }: { href?: string; children: ReactNode; onClick?: () => void }) {
+  if (href) {
+    return (
+      <Link href={href} className="header-link">
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <button type="button" className="header-link" onClick={onClick}>
+      {children}
+    </button>
   );
 }
 

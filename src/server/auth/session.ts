@@ -1,7 +1,7 @@
 import 'server-only';
 import { cookies, headers } from 'next/headers';
 import { getEnv } from '../env';
-import { db } from '../db';
+import { db, type Db } from '../db';
 import { hmacHex, randomToken, safeEqual } from '@/src/domain/helpers';
 
 export const SESSION_COOKIE = 'again_session';
@@ -32,10 +32,10 @@ function verify(signed: string | undefined): string | null {
 }
 
 /** Creates a DB-backed session (local driver) and returns the Set-Cookie value pieces. */
-export async function createLocalSession(userId: string) {
+export async function createLocalSession(userId: string, conn: Db = db) {
   const id = randomToken(32);
   const expires = new Date(Date.now() + SESSION_TTL_DAYS * 86400_000);
-  await db.query('insert into public.auth_sessions(id, user_id, expires_at) values ($1,$2,$3)', [id, userId, expires]);
+  await conn.query('insert into public.auth_sessions(id, user_id, expires_at) values ($1,$2,$3)', [id, userId, expires]);
   return { name: SESSION_COOKIE, value: sign(id), expires };
 }
 

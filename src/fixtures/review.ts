@@ -1,6 +1,7 @@
 /* Deterministic review fixtures for /review/[01-21]. These are scenario values,
  * not one continuous account: the pack buyer and the subscriber are separate. */
-import type { Credits, Draft, Film, Job, Profile, Subscription } from '@/src/domain/types';
+import type { Checkout, Credits, Draft, Film, Job, PaymentStatus, Profile, Subscription } from '@/src/domain/types';
+import { CATALOG } from '@/src/domain/catalog';
 
 export const SAMPLE = {
   dog: '/samples/dog-beach.jpg',
@@ -95,12 +96,12 @@ export const creditsThree: Credits = { available: 3, held: 0, purchasedAvailable
 export const creditsTwo: Credits = { available: 2, held: 1, purchasedAvailable: 2, monthlyAvailable: 0, nextExpiryAt: null };
 export const creditsZero: Credits = { available: 0, held: 0, purchasedAvailable: 0, monthlyAvailable: 0, nextExpiryAt: null };
 export const creditsFive: Credits = { available: 5, held: 0, purchasedAvailable: 5, monthlyAvailable: 0, nextExpiryAt: null };
-export const creditsSubscriber: Credits = { available: 12, held: 0, purchasedAvailable: 5, monthlyAvailable: 7, nextExpiryAt: '2026-10-24T00:00:00.000Z' };
+export const creditsSubscriber: Credits = { available: 12, held: 0, purchasedAvailable: 5, monthlyAvailable: 7, nextExpiryAt: '2026-10-24T16:00:00.000Z' };
 
 export const subscriptionActive: Subscription = {
   status: 'active',
   plan: 'monthly_10',
-  currentPeriodEnd: '2026-10-24T00:00:00.000Z',
+  currentPeriodEnd: '2026-10-24T16:00:00.000Z',
   cancelAtPeriodEnd: false,
   scheduledPlan: null,
   nextAmountCents: 2900,
@@ -110,3 +111,29 @@ export const subscriptionActive: Subscription = {
 };
 
 export const subscriptionNone: Subscription = { status: 'none', plan: null, currentPeriodEnd: null, cancelAtPeriodEnd: false, scheduledPlan: null, nextAmountCents: null };
+
+export const reviewCheckout: Checkout = {
+  id: 'cccccccc-cccc-4ccc-8ccc-cccccccccccc',
+  stripeSessionId: 'mock_review',
+  clientSecret: '',
+  product: CATALOG.find((p) => p.code === 'pack_5')!,
+  draftId: draft.id,
+  fulfillmentStatus: 'pending',
+  amountTotalCents: 1900,
+  currency: 'usd',
+  taxCents: 0,
+  draftPreviewUrl: SAMPLE.dog,
+  provider: 'mock',
+  status: 'open',
+};
+
+export const reviewPaymentStatus: PaymentStatus = {
+  status: 'fulfilled',
+  creditsAdded: 5,
+  draftId: draft.id,
+  receiptUrl: '#receipt',
+  product: CATALOG.find((p) => p.code === 'pack_5')!,
+  amountTotalCents: 1900,
+  mode: 'payment',
+  draftPreviewUrl: SAMPLE.dog,
+};
