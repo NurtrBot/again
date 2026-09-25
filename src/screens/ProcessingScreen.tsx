@@ -18,6 +18,42 @@ export interface ProcessingProps {
 }
 
 type StepState = 'done' | 'active' | 'todo';
+
+/** Motion ticker: a ruler with a knob that sweeps while the film is being made. Reflects the real phase only. */
+const TICK_HEIGHTS = [10, 16, 12, 22, 14, 10, 18, 26, 14, 12, 20, 10, 16, 24, 12, 18, 10, 14, 22, 12, 16, 28, 10, 14, 18, 12, 24, 10, 16, 20, 12, 14, 26, 10, 18, 12, 22, 14, 10, 16];
+function MotionTicker({ phase }: { phase: 'photo' | 'motion' | 'finish' }) {
+  const mode = phase === 'motion' ? 'sweep' : phase === 'finish' ? 'finish' : 'idle';
+  const label = phase === 'motion' ? 'Creating motion' : phase === 'finish' ? 'Finishing your film' : 'Photo received';
+  return (
+    <div className={`ticker ticker--${mode}`} aria-hidden>
+      <span className="viewfinder__corner viewfinder__corner--tl" />
+      <span className="viewfinder__corner viewfinder__corner--tr" />
+      <span className="viewfinder__corner viewfinder__corner--bl" />
+      <span className="viewfinder__corner viewfinder__corner--br" />
+      <div className="ticker__track">
+        <div className="ticker__ticks ticker__ticks--dim">
+          {TICK_HEIGHTS.map((h, i) => (
+            <span key={i} style={{ ['--h' as string]: h }} />
+          ))}
+        </div>
+        <div className="ticker__ticks ticker__ticks--lit">
+          {TICK_HEIGHTS.map((h, i) => (
+            <span key={i} style={{ ['--h' as string]: h }} />
+          ))}
+        </div>
+        <span className="ticker__knob" />
+      </div>
+      <div className="ticker__label">
+        <span>{label}</span>
+        <span className="ticker__dots">
+          <i />
+          <i />
+        </span>
+      </div>
+    </div>
+  );
+}
+
 function stepsFor(status: Job['status']): [StepState, StepState, StepState] {
   switch (status) {
     case 'queued':
@@ -197,7 +233,11 @@ export function ProcessingScreen({ demo, review, job: initial, draftId, credits:
           <Corners />
         </div>
 
-        <ol className="steps" style={{ marginTop: 42, listStyle: 'none', padding: 0, margin: '42px 0 0' }} aria-label="Progress">
+        <div style={{ marginTop: 22 }}>
+          <MotionTicker phase={steps[2] !== 'todo' ? 'finish' : steps[1] !== 'todo' ? 'motion' : 'photo'} />
+        </div>
+
+        <ol className="steps" style={{ listStyle: 'none', padding: 0, margin: '26px 0 0' }} aria-label="Progress">
           <span className="steps__line" aria-hidden />
           <span className="steps__line-fill" aria-hidden style={{ width: `calc(66.8% * ${fill === '100%' ? 1 : fill === '50%' ? 0.5 : 0})` }} />
           {COPY.s07.steps.map((label, i) => (

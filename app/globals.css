@@ -2119,3 +2119,165 @@ p {
 [data-review='1'] .review-only {
   display: block;
 }
+
+/* ---------- Motion ticker (07 Creating) ---------- */
+.ticker {
+  position: relative;
+  padding: 18px 22px 14px;
+  color: #fff;
+}
+.ticker .viewfinder__corner {
+  width: 22px;
+  height: 22px;
+  border-width: 2.5px;
+}
+.ticker .viewfinder__corner--tl,
+.ticker .viewfinder__corner--tr {
+  top: 0;
+}
+.ticker .viewfinder__corner--bl,
+.ticker .viewfinder__corner--br {
+  bottom: 0;
+}
+.ticker .viewfinder__corner--tl,
+.ticker .viewfinder__corner--bl {
+  left: 0;
+}
+.ticker .viewfinder__corner--tr,
+.ticker .viewfinder__corner--br {
+  right: 0;
+}
+.ticker__track {
+  position: relative;
+  height: 44px;
+  --knob: 26px;
+}
+.ticker__ticks {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2px;
+}
+.ticker__ticks span {
+  display: block;
+  width: 2px;
+  border-radius: 1px;
+  background: #fff;
+  height: calc(var(--h) * 1px);
+}
+.ticker__ticks--dim span {
+  opacity: 0.42;
+}
+.ticker__ticks--lit {
+  -webkit-mask-image: radial-gradient(closest-side, #000 0%, #000 45%, transparent 100%);
+  mask-image: radial-gradient(closest-side, #000 0%, #000 45%, transparent 100%);
+  -webkit-mask-size: 120px 100%;
+  mask-size: 120px 100%;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: calc(var(--x) * (100% + 120px) - 60px) 50%;
+  mask-position: calc(var(--x) * (100% + 120px) - 60px) 50%;
+}
+.ticker__knob {
+  position: absolute;
+  top: 50%;
+  left: calc(var(--x) * (100% - var(--knob)));
+  width: var(--knob);
+  height: 34px;
+  transform: translateY(-50%);
+  border-radius: 5px;
+  background: #fff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+}
+.ticker__knob::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--cobalt);
+  opacity: 0.6;
+}
+.ticker--sweep .ticker__track {
+  animation: ticker-sweep 2.6s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+.ticker--idle .ticker__track {
+  animation: ticker-sweep 7s cubic-bezier(0.45, 0, 0.55, 1) infinite alternate;
+}
+.ticker--finish .ticker__track {
+  animation: ticker-finish 1.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+.ticker--finish .ticker__ticks--dim span {
+  opacity: 1;
+  transition: opacity 1.2s ease;
+}
+@keyframes ticker-sweep {
+  from {
+    --x: 0;
+  }
+  to {
+    --x: 1;
+  }
+}
+@keyframes ticker-finish {
+  to {
+    --x: 1;
+  }
+}
+@property --x {
+  syntax: '<number>';
+  inherits: true;
+  initial-value: 0.5;
+}
+.ticker__label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 16px;
+  letter-spacing: 0.01em;
+}
+.ticker__dots {
+  display: inline-flex;
+  gap: 6px;
+}
+.ticker__dots i {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #fff;
+  opacity: 0.35;
+  animation: ticker-dot 1.2s ease-in-out infinite;
+}
+.ticker__dots i:nth-child(2) {
+  animation-delay: 0.6s;
+}
+@keyframes ticker-dot {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ticker .ticker__track {
+    animation: none !important;
+    --x: 0.5;
+  }
+  .ticker__dots i {
+    animation: none;
+    opacity: 0.8;
+  }
+}
+[data-review='1'] .ticker .ticker__track {
+  animation: none !important;
+  --x: 0.5;
+}
